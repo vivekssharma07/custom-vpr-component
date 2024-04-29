@@ -12,16 +12,13 @@ import "@fontsource/open-sans/700-italic.css";
 import "@fontsource/open-sans/800.css";
 import "@fontsource/open-sans/800-italic.css";
 import "@fontsource/pt-mono";
-
 // Import <SaltProvider>
 import { SaltProvider } from "@salt-ds/core";
-
 // Import theme CSS
 import "@salt-ds/theme/index.css";
+import FormComponent from '../components/FormComponent/index';
 
-import DynamicForm from '../components/FormComponent/index';
-
-const MyForm = () => {
+const DynamicForm = () => {
     const handleSubmit = (formData) => {
         // Handle form submission here
         console.log(formData);
@@ -36,11 +33,11 @@ const MyForm = () => {
 
     return (<>
         <SaltProvider>
-            <DynamicForm fields={fields} onSubmit={handleSubmit} />
+            <FormComponent fields={fields} onSubmit={handleSubmit} />
         </SaltProvider>
     </>
 
     );
 };
 
-export default MyForm;
+export default DynamicForm;

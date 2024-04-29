@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { GridLayout, Input, Checkbox, Dropdown, Button } from '@salt-ds/core';
 import { DateInput } from '@salt-ds/lab';
-const FormComponent = ({ onSubmit }) => {
-  const fields = [
-    { type: 'text', label: 'Text Field', value: '' },
-    { type: 'checkbox', label: 'Checkbox', checked: false },
-    { type: 'dropdown', label: 'Dropdown', value: '', options: ['Option 1', 'Option 2', 'Option 3'] },
-    { type: 'date', label: 'Date Field', value: new Date() }
-  ];
+
+const FormComponent = ({ fields, onSubmit }) => {
 
   const [formData, setFormData] = useState(
     fields.reduce((acc, field) => {
-      acc[field.label] = field.value;
-      return acc;
+      return { ...acc, [field.label]: field.value };
     }, {})
   );
 
