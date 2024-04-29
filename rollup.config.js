@@ -1,47 +1,34 @@
-import babel from 'rollup-plugin-babel';
-import resolve from '@rollup/plugin-node-resolve';
-import external from 'rollup-plugin-peer-deps-external';
-import { terser } from 'rollup-plugin-terser';
-import postcss from 'rollup-plugin-postcss';
-import commonjs from '@rollup/plugin-commonjs';
+import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import babel from "@rollup/plugin-babel";
+import postcss from "rollup-plugin-postcss";
+import external from "rollup-plugin-peer-deps-external";
+import terser from "@rollup/plugin-terser";
+const packageJson = require("./package.json");
 
 export default [
   {
-    input: './src/index.js',
+    input: "src/index.js",
     output: [
-      {
-        file: 'dist/index.js',
-        format: 'cjs',
-      },
-      {
-        file: 'dist/index.es.js',
-        format: 'es',
-        exports: 'named',
-      }
+      { file: packageJson.main, format: "cjs" },
+      { file: packageJson.module, format: "esm" },
     ],
     plugins: [
-      postcss({
-        plugins: [],
-        minimize: true,
-      }),
+      resolve(),
+      commonjs({ include: ["node_modules/**"] }),
       babel({
-        exclude: 'node_modules/**',
-        presets: ['@babel/preset-react']
+        exclude: "node_modules/**",
+        presets: ["@babel/env", "@babel/preset-react"],
+        babelHelpers: "bundled",
       }),
+      postcss(),
       external([
-        '@mui/material',
-        '@mui/lab',
-        '@emotion/styled',
-        '@emotion/react',
+        "@salt-ds/core",
+        "@salt-ds/icons",
+        "@salt-ds/lab",
+        "@salt-ds/theme"
       ]),
-      resolve({
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      }),
-      commonjs({
-        include: /node_modules/,
-        requireReturnsDefault: 'auto', // <---- this solves default issue
-      }),
-      terser(),
-    ]
-  }
+      terser()
+    ],
+  },
 ];
