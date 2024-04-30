@@ -56,5 +56,8 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "@storybook/addon-console": "^3.0.0"
   }
 }

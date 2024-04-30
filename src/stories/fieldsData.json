@@ -1,0 +1,127 @@
+{
+    "parameters": [
+        {
+            "type": "date",
+            "parameter": {
+                "displayName": "Effective Date",
+                "parameterName": "date"
+            },
+            "values": "",
+            "mandatory": true,
+            "dynamic": {
+                "parents": [],
+                "children": [
+                    "multiView"
+                ]
+            },
+            "description": "Test Description",
+            "noSelect": "Please Select a date"
+        },
+        {
+            "type": "dropDown",
+            "parameter": {
+                "displayName": "DropDown",
+                "parameterName": "dropDown"
+            },
+            "values": [
+                {
+                    "displayName": "Current Business Day",
+                    "parameterValue": "04/26/2024",
+                    "isSelected": true
+                },
+                {
+                    "displayName": "Prior Business Day",
+                    "parameterValue": "04/25/2024",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "Prior Month End",
+                    "parameterValue": "03/31/2024",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "Frior Year End",
+                    "parameterValue": "12/31/2023",
+                    "misSelected": false
+                },
+                {
+                    "displayName": "User Defined",
+                    "parameterValue": "-",
+                    "isSelected": false
+                }
+            ],
+            "mandatory": true,
+            "dynamic": {
+                "parents": [
+                    "accNum",
+                    "effDt"
+                ],
+                "children": [
+                    "multiView"
+                ]
+            },
+            "description": "Test Description",
+            "noSelect": "Please select"
+        },
+        {
+            "type": "text",
+            "parameter": {
+                "displayName": "Text Input",
+                "parameterName": "text"
+            },
+            "values": "Demo Text",
+            "mandatory": true,
+            "dynamic": {
+                "parents": [
+                    "accNum",
+                    "effDt"
+                ],
+                "children": [
+                    "multiView"
+                ]
+            },
+            "description": "Test Description",
+            "noSelect": "Please enter"
+        },
+        {
+            "type": "checkbox",
+            "parameter": {
+                "displayName": "Checkbox",
+                "parameterName": "checkbox"
+            },
+            "values": true,
+            "mandatory": true,
+            "dynamic": {
+                "parents": [
+                    "accNum",
+                    "effDt"
+                ],
+                "children": [
+                    "multiView"
+                ]
+            },
+            "description": "Test Description",
+            "noSelect": "Please Select"
+        },
+        {
+            "type": "number",
+            "parameter": {
+                "displayName": "Number Input",
+                "parameterName": "number"
+            },
+            "values": 20,
+            "mandatory": true,
+            "dynamic": {
+                "parents": [
+                    "accNum",
+                    "effDt"
+                ],
+                "children": [
+                    "multiView"
+                ]
+            },
+            "description": "Number Description",
+            "noSelect": "Please enter a number"
+        }
+    ]
+}

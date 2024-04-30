@@ -17,23 +17,17 @@ import { SaltProvider } from "@salt-ds/core";
 // Import theme CSS
 import "@salt-ds/theme/index.css";
 import FormComponent from '../components/FormComponent/index';
+import { parameters } from './fieldsData.json';
 
 const DynamicForm = () => {
+
     const handleSubmit = (formData) => {
-        // Handle form submission here
         console.log(formData);
     };
 
-    const fields = [
-        { type: 'text', label: 'Text Field', value: '' },
-        { type: 'checkbox', label: 'Checkbox', checked: false },
-        { type: 'dropdown', label: 'Dropdown', value: '', options: ['Option 1', 'Option 2', 'Option 3'] },
-        { type: 'date', label: 'Date Field', value: new Date() }
-    ];
-
     return (<>
         <SaltProvider>
-            <FormComponent fields={fields} onSubmit={handleSubmit} />
+            <FormComponent parameters={parameters} onSubmit={handleSubmit} />
         </SaltProvider>
     </>
 
