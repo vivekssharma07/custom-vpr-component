@@ -10,7 +10,7 @@
                 {
                     "displayName": "Current Business Day",
                     "parameterValue": "04/26/2024",
-                    "isSelected": true
+                    "isSelected": false
                 },
                 {
                     "displayName": "Prior Business Day",
@@ -53,7 +53,7 @@
                 {
                     "displayName": "Value One",
                     "parameterValue": "1",
-                    "isSelected": false
+                    "isSelected": true
                 },
                 {
                     "displayName": "Value Two",
