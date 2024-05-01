@@ -1,27 +1,10 @@
 {
     "parameters": [
         {
-            "type": "date",
+            "type": "dateRule",
             "parameter": {
                 "displayName": "Effective Date",
-                "parameterName": "date"
-            },
-            "values": "",
-            "mandatory": true,
-            "dynamic": {
-                "parents": [],
-                "children": [
-                    "multiView"
-                ]
-            },
-            "description": "Test Description",
-            "noSelect": "Please Select a date"
-        },
-        {
-            "type": "dropDown",
-            "parameter": {
-                "displayName": "DropDown",
-                "parameterName": "dropDown"
+                "parameterName": "effDt"
             },
             "values": [
                 {
@@ -52,76 +35,147 @@
             ],
             "mandatory": true,
             "dynamic": {
-                "parents": [
-                    "accNum",
-                    "effDt"
-                ],
+                "parents": [],
                 "children": [
                     "multiView"
                 ]
             },
             "description": "Test Description",
-            "noSelect": "Please select"
+            "noSelect": "Please Select a date"
         },
         {
-            "type": "text",
+            "type": "dropDown",
             "parameter": {
-                "displayName": "Text Input",
-                "parameterName": "text"
+                "displayName": "Random Account Based Parameters",
+                "parameterName": "sampleParameter"
             },
-            "values": "Demo Text",
+            "values": [
+                {
+                    "displayName": "Value One",
+                    "parameterValue": "1",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "Value Two",
+                    "parameterValue": "2",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "Value Three",
+                    "parameterValue": "3",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "Value Four",
+                    "parameterValue": "4",
+                    "isSelected": false
+                }
+            ],
             "mandatory": true,
             "dynamic": {
                 "parents": [
-                    "accNum",
-                    "effDt"
+                    
                 ],
                 "children": [
-                    "multiView"
                 ]
             },
-            "description": "Test Description",
-            "noSelect": "Please enter"
+            "description": null,
+            "noSelect": "Please select account"
         },
         {
-            "type": "checkbox",
+            "type": "dropDown",
             "parameter": {
-                "displayName": "Checkbox",
-                "parameterName": "checkbox"
+                "displayName": "Accounting View",
+                "parameterName": "accountView"
             },
-            "values": true,
+            "values": [
+                {
+                    "displayName": "GA View",
+                    "parameterValue": "GA",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "FA View",
+                    "parameterValue": "FA",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "IA View",
+                    "parameterValue": "IA",
+                    "isSelected": false
+                }
+            ],
+            "mandatory": false,
+            "dynamic": {
+                "parents": [
+                    "sampleParameter"
+                ],
+                "children": [
+                ]
+            },
+            "description": null,
+            "noSelect": "Please select a view"
+        },
+        {
+            "type": "Checkbox",
+            "parameter": {
+                "displayName": "Output Type",
+                "parameterName": "opType"
+            },
+            "values": [
+                {
+                    "displayName": "PDF",
+                    "parameterValue": "PDF",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "HTML",
+                    "parameterValue": "HTML",
+                    "isSelected": true
+                },
+                {
+                    "displayName": "XLS",
+                    "parameterValue": "XLS",
+                    "isSelected": false
+                }
+            ],
+            "mandatory": false,
+            "dynamic": {
+                "parents": [
+                ],
+                "children": [
+                ]
+            },
+            "description":null,
+            "noSelect": "Please select a view"
+        },
+        {
+            "type": "Radiobutton",
+            "parameter": {
+                "displayName": "Select Account Type",
+                "parameterName": "acct"
+            },
+            "values": [
+                {
+                    "displayName": "All Securities Accounts (opened or closed)",
+                    "parameterValue": "orc",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "Expection Account vs Relationship",
+                    "parameterValue": "avr",
+                    "isSelected": true
+                }
+            ],
             "mandatory": true,
             "dynamic": {
                 "parents": [
-                    "accNum",
-                    "effDt"
                 ],
                 "children": [
-                    "multiView"
                 ]
             },
-            "description": "Test Description",
-            "noSelect": "Please Select"
-        },
-        {
-            "type": "number",
-            "parameter": {
-                "displayName": "Number Input",
-                "parameterName": "number"
-            },
-            "values": 20,
-            "mandatory": true,
-            "dynamic": {
-                "parents": [
-                    "accNum",
-                    "effDt"
-                ],
-                "children": [
-                    "multiView"
-                ]
-            },
-            "description": "Number Description",
-            "noSelect": "Please enter a number"
+            "description": null,
+            "noSelect": "Please select a view"
         }
     ]
 }
