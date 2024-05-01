@@ -25,7 +25,7 @@
                 {
                     "displayName": "Frior Year End",
                     "parameterValue": "12/31/2023",
-                    "misSelected": false
+                    "isSelected": false
                 },
                 {
                     "displayName": "User Defined",
@@ -53,7 +53,7 @@
                 {
                     "displayName": "Value One",
                     "parameterValue": "1",
-                    "isSelected": true
+                    "isSelected": false
                 },
                 {
                     "displayName": "Value Two",
@@ -77,6 +77,7 @@
                     
                 ],
                 "children": [
+                    "accountView"
                 ]
             },
             "description": null,

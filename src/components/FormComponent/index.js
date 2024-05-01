@@ -8,33 +8,101 @@ const FormComponent = ({ parameters, onSubmit }) => {
 
   // Handler function to update form data on change
   const handleChange = (parameterName, value) => {
-    setFormData(prevState => {
-      const updatedParameters = prevState.map(param => {
-        if (param.parameter.parameterName === parameterName) {
-          return {
-            ...param,
-            // Update isSelected property based on the selected value
-            values: param.values.map(item => ({
-              ...item,
-              isSelected: item.parameterValue === value
-            }))
-          };
-        }
-        return param;
-      });
-      return updatedParameters;
-    });
+   
+    if (parameterName === 'sampleParameter') {
+      const formatData = formatSampledParameterRequest(parameterName, value)
+      console.log("On Change ", formatData)
+    }
+
+    // Update form data based on parameterName and value
+    setFormData(prevState => prevState.map(param => ({
+      ...param,
+      values: param.parameter.parameterName === parameterName
+        ? param.values.map(item => ({ ...item, isSelected: item.parameterValue === value }))
+        : param.values
+    })));
+  };
+
+  const formatSampledParameterRequest = (parameterName, value) => {
+    const profileId = 12345;
+    const parameterToUpdate = [];
+    const parentParameters = {};
+
+    // Find the parameter object in the form data based on parameterName
+    const param = formData.find(param => param.parameter.parameterName === parameterName);
+
+    // Find the child parameter name from the dynamic property
+    const child = param?.dynamic?.children[0];
+
+    // If parameter and child exist, update parameterToUpdate and parentParameters
+    if (param && child) {
+      parameterToUpdate.push(child);
+      parentParameters[parameterName] = [{ parameterValue: value }];
+    }
+
+    return { profileId, parameterToUpdate, parentParameters };
+  };
+
+
+  // Render input based on parameter type
+  const renderInput = (param) => {
+    switch (param.type) {
+      case 'dateRule':
+        return (
+          <>
+            {renderDropdown(param)}
+            {renderDateInput(param)}
+          </>
+        );
+      case 'dropDown':
+        return renderDropdown(param);
+      case 'text':
+        return (
+          <Input
+            type="text"
+            value={formData[param.parameter.parameterName] || ''}
+            onChange={(e) => handleChange(param.parameter.parameterName, e.target.value)}
+          />
+        );
+      case 'Checkbox':
+        return (
+          <StackLayout gap={1} direction="row">
+            {param.values.map(item => (
+              <Checkbox
+                key={item.parameterValue}
+                checked={item.isSelected || false}
+                onChange={() => handleChange(param.parameter.parameterName, item.parameterValue)}
+                label={item.displayName}
+              />
+            ))}
+          </StackLayout>
+        );
+      case 'Radiobutton':
+        return (
+          <StackLayout gap={1}>
+            {param.values.map(item => (
+              <RadioButton
+                key={item.parameterValue}
+                checked={item.isSelected}
+                onChange={() => handleChange(param.parameter.parameterName, item.parameterValue)}
+                label={item.displayName}
+              />
+            ))}
+          </StackLayout>
+        );
+      default:
+        return null;
+    }
   };
 
   // Render Dropdown component with default selected value
   const renderDropdown = (param) => {
-    // Find the default selected option
     const defaultSelectedOption = param.values.find(option => option.isSelected);
-    const enableDropwDown = formData.find(item => item.type === "dropDown" && item.parameter.parameterName === "sampleParameter")?.values.some(option => option.isSelected) || false;
     return (
       <Dropdown
         valueToString={(option) => option.displayName || [defaultSelectedOption?.displayName]}
         defaultSelected={defaultSelectedOption ? [defaultSelectedOption.displayName] : []}
+        validationStatus={param.mandatory && !defaultSelectedOption && param.isInvalid ? 'error' : null} // Set validation status
         onSelectionChange={(e, selectedOption) => handleChange(param.parameter.parameterName, selectedOption[0].parameterValue)}
       >
         {param.values.map((option) => (
@@ -49,36 +117,29 @@ const FormComponent = ({ parameters, onSubmit }) => {
   // Render DateInput component if User Defined option is selected
   const renderDateInput = (param) => {
     const defaultSelectedOption = param.values.find(option => option.isSelected);
-    return (<DateInput label={param.parameter.displayName} value={defaultSelectedOption?.parameterValue}
-      onChange={(e) => handleChange(param.parameter.parameterName, e.target.value)} />)
-  }
+    return (
+      <DateInput
+        label={param.parameter.displayName}
+        value={defaultSelectedOption?.parameterValue}
+        onChange={(e) => handleChange(param.parameter.parameterName, e.target.value)}
+      />
+    );
+  };
 
   // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    const reqData = formatValue();
-    onSubmit(reqData);
-  };
-
-  // Format form data for submission
-  const formatValue = () => {
-    const profileId = 12345;
-    const parameterToUpdate = [];
-    const parentParameters = {};
-
-    formData.forEach(param => {
-      // Check if dynamic parents include either "sampleParameter" or "multiView"
-      if (param.dynamic && (param.dynamic.parents.includes("sampleParameter") || param.dynamic.parents.includes("multiView"))) {
-        const selectedValues = param.values.filter(value => value.isSelected);
-        if (selectedValues.length > 0) {
-          const parameterName = param.parameter.parameterName;
-          parameterToUpdate.push(parameterName);
-          parentParameters[parameterName] = selectedValues.map(value => ({ parameterValue: value.parameterValue }));
-        }
-      }
-    });
-
-    return { profileId, parameterToUpdate, parentParameters };
+    // Check for mandatory fields
+    const isFormValid = formData.every(param => !param.mandatory || param.values.some(item => item.isSelected));
+    // If form is valid, submit data; otherwise, set invalid flag for mandatory fields
+    if (isFormValid) {
+      onSubmit(formData);
+    } else {
+      setFormData(prevState => prevState.map(param => ({
+        ...param,
+        isInvalid: param.mandatory && !param.values.some(item => item.isSelected)
+      })));
+    }
   };
 
   return (
@@ -87,47 +148,7 @@ const FormComponent = ({ parameters, onSubmit }) => {
         <FormField key={param.parameter.parameterName}>
           <FormFieldLabel>{param.parameter.displayName}</FormFieldLabel>
           <StackLayout gap={1} direction="row" role="group">
-            {param.type === 'dateRule' ? (
-              // Render Dropdown and DateInput for 'dateRule' type
-              <>
-                {renderDropdown(param)}
-                {renderDateInput(param)}
-              </>
-            ) : param.type === 'dropDown' ? (
-              // Render Dropdown for 'dropDown' type
-              renderDropdown(param)
-            ) : param.type === 'text' ? (
-              // Render Input for 'text' type
-              <Input
-                type="text"
-                value={formData[param.parameter.parameterName] || ''}
-                onChange={(e) => handleChange(param.parameter.parameterName, e.target.value)}
-              />
-            ) : param.type === 'Checkbox' ? (
-              // Render Checkbox for 'Checkbox' type
-              <StackLayout gap={1} direction="row">
-                {param.values.map(item => (
-                  <Checkbox
-                    key={item.parameterValue}
-                    checked={item.isSelected || false}
-                    onChange={() => handleChange(param.parameter.parameterName, item.parameterValue)}
-                    label={item.displayName}
-                  />
-                ))}
-              </StackLayout>
-            ) : param.type === 'Radiobutton' ? (
-              // Render RadioButton for 'Radiobutton' type
-              <StackLayout gap={1}>
-                {param.values.map(item => (
-                  <RadioButton
-                    key={item.parameterValue}
-                    checked={item.isSelected}
-                    onChange={() => handleChange(param.parameter.parameterName, item.parameterValue)}
-                    label={item.displayName}
-                  />
-                ))}
-              </StackLayout>
-            ) : null}
+            {renderInput(param)}
           </StackLayout>
         </FormField>
       ))}

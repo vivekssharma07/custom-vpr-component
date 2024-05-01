@@ -22,7 +22,7 @@ import { parameters } from './fieldsData.json';
 const DynamicForm = () => {
 
     const handleSubmit = (formData) => {
-        console.log(formData);
+        console.log("On Form Submit",formData);
     };
 
     return (<>
