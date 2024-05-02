@@ -1,20 +1,25 @@
-name: "publish npm"
+name: Publish npm
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-    publish:
-        runs-on: ubuntu-latest
-        steps:
-            - name: checkout
-              uses: actions/checkout@v2
-            - name: node
-              uses: actions/setup-node@v2
-              with:
-                  node-version: 18
-                  registry-url: https://registry.npmjs.org
-            - name: publish
-              run: npm publish --access public
-              working-directory: custom-vpr-component
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.CUSTOM_FORM_TOKEN}}
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18' # Adjust the Node.js version as needed
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to npm
+        run: npm publish --access public
+        working-directory: custom-vpr-component
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
