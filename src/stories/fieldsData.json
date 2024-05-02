@@ -53,7 +53,7 @@
                 {
                     "displayName": "Value One",
                     "parameterValue": "1",
-                    "isSelected": false
+                    "isSelected": true
                 },
                 {
                     "displayName": "Value Two",
@@ -98,7 +98,7 @@
                 {
                     "displayName": "FA View",
                     "parameterValue": "FA",
-                    "isSelected": false
+                    "isSelected": true
                 },
                 {
                     "displayName": "IA View",
@@ -165,7 +165,7 @@
                 {
                     "displayName": "Expection Account vs Relationship",
                     "parameterValue": "avr",
-                    "isSelected": true
+                    "isSelected": false
                 }
             ],
             "mandatory": true,

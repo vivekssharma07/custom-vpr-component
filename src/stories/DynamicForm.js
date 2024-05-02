@@ -16,7 +16,8 @@ import "@fontsource/pt-mono";
 import { SaltProvider } from "@salt-ds/core";
 // Import theme CSS
 import "@salt-ds/theme/index.css";
-import FormComponent from '../components/FormComponent/index';
+import {CustomFormComponent} from '../components/CustomFormComponent';
+import {LeftRightComponent} from '../components/LeftRightComponent';
 import { parameters } from './fieldsData.json';
 
 const DynamicForm = () => {
@@ -27,7 +28,8 @@ const DynamicForm = () => {
 
     return (<>
         <SaltProvider>
-            <FormComponent parameters={parameters} onSubmit={handleSubmit} />
+            <CustomFormComponent parameters={parameters} onSubmit={handleSubmit} />
+            {/* <LeftRightComponent />  */}
         </SaltProvider>
     </>
 
