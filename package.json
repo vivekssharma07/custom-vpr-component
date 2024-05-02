@@ -1,5 +1,5 @@
 {
-  "name": "custom-form-component",
+  "name": "custom-vpr-component",
   "version": "1.0.5",
   "description": "CustomFormComponent is a react component that renders a form based on provided parameters, allowing users to input data and submit it.",
   "repository": {
