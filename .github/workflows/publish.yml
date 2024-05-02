@@ -15,6 +15,6 @@ jobs:
                   registry-url: https://registry.npmjs.org
             - name: publish
               run: npm publish --access public
-              working-directory: dist
+              working-directory: custom-vpr-component
               env:
                   NODE_AUTH_TOKEN: ${{secrets.CUSTOM_FORM_TOKEN}}
