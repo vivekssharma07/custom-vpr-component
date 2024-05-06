@@ -5,6 +5,7 @@ import { RadioButtonComponent } from '../RadioComponent';
 import { CheckboxComponent } from '../CheckboxComponent';
 import { DateRuleComponent } from '../DateRuleComponent';
 import { DropdownComponent } from '../DropDownComponent';
+import { MultiSelectComponent } from '../MultiSelectComponent';
 
 export const CustomFormComponent = ({ parameters, onSubmit }) => {
   // State to manage form data
@@ -79,6 +80,7 @@ export const CustomFormComponent = ({ parameters, onSubmit }) => {
           {param.type === 'dropDown' && <DropdownComponent param={param} handleChange={handleChange} />}
           {param.type === 'Checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
           {param.type === 'Radiobutton' && <RadioButtonComponent param={param} handleChange={handleChange} />}
+          {param.type === 'multiSelect' && <MultiSelectComponent param={param} handleChange={handleChange} />}
         </FormField>
       ))}
       <Button value={'Reset'} onClick={handleReset} variant="secondary">Reset</Button>

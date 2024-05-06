@@ -177,6 +177,40 @@
             },
             "description": null,
             "noSelect": "Please select a view"
+        },
+        {
+            "type": "multiSelect",
+            "parameter": {
+                "displayName": "Multi Select",
+                "parameterName": "multiSelectView"
+            },
+            "values": [
+                {
+                    "displayName": "MultiSelect View",
+                    "parameterValue": "MA",
+                    "isSelected": true
+                },
+                {
+                    "displayName": "CA View",
+                    "parameterValue": "CA",
+                    "isSelected": true
+                },
+                {
+                    "displayName": "IP View",
+                    "parameterValue": "IP",
+                    "isSelected": true
+                }
+            ],
+            "mandatory": false,
+            "dynamic": {
+                "parents": [
+                    "sampleParameter"
+                ],
+                "children": [
+                ]
+            },
+            "description": null,
+            "noSelect": "Please select a view"
         }
     ]
 }

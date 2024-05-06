@@ -16,24 +16,21 @@ import "@fontsource/pt-mono";
 import { SaltProvider } from "@salt-ds/core";
 // Import theme CSS
 import "@salt-ds/theme/index.css";
-import {CustomFormComponent} from '../components/CustomFormComponent';
-import {LeftRightComponent} from '../components/LeftRightComponent';
+import { CustomFormComponent } from '../components/CustomFormComponent';
+//import {LeftRightComponent} from '../components/LeftRightComponent';
 import { parameters } from './fieldsData.json';
 
-const DynamicForm = () => {
+export const Form = () => {
 
     const handleSubmit = (formData) => {
-        console.log("On Form Submit",formData);
+        console.log("On Form Submit", formData);
     };
 
     return (<>
         <SaltProvider>
             <CustomFormComponent parameters={parameters} onSubmit={handleSubmit} />
-            {/* <LeftRightComponent />  */}
         </SaltProvider>
     </>
 
     );
 };
-
-export default DynamicForm;

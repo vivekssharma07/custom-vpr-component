@@ -1,9 +1,9 @@
 import { fn } from '@storybook/test';
-import DynamicForm from './DynamicForm'
+import {Form} from './Form'
 
 export default {
-  title: 'Example/DynamicForm',
-  component: DynamicForm,
+  title: 'Example/Form',
+  component: Form,
   parameters: {
     layout: 'centered',
   },
@@ -18,13 +18,13 @@ export default {
 export const Primary = {
   args: {
     primary: true,
-    label: 'DynamicForm',
+    label: 'Form',
   },
 };
 
 export const Secondary = {
   args: {
-    label: 'DynamicForm',
+    label: 'Form',
   },
 };
 
