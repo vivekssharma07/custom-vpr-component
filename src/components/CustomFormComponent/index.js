@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, FlowLayout, FormField, FormFieldLabel } from '@salt-ds/core';
+import { Button, FlowLayout, FormField, FormFieldLabel, StackLayout } from '@salt-ds/core';
 import { RadioButtonComponent } from '../RadioComponent';
 import { CheckboxComponent } from '../CheckboxComponent';
 import { DateRuleComponent } from '../DateRuleComponent';
 import { DropdownComponent } from '../DropDownComponent';
-import { MultiSelectComponent } from '../MultiSelectComponent';
+import { TableWithCustomDropdown } from '../TableWithCustomDropdown';
 
 export const CustomFormComponent = ({ parameters, onSubmit }) => {
   // State to manage form data
   const [formData, setFormData] = useState(parameters);
 
   // Handler function to update form data on change
-  const handleChange = (parameterName, value) => {
+  const handleChangeOld = (parameterName, value) => {
     if (parameterName === 'sampleParameter') {
       const formatData = formatSampledParameterRequest(parameterName, value)
       console.log("On Change ", formatData)
@@ -25,6 +25,46 @@ export const CustomFormComponent = ({ parameters, onSubmit }) => {
         ? param.values.map(item => ({ ...item, isSelected: item.parameterValue === value }))
         : param.values
     })));
+  };
+
+  const handleChange = (parameterName, value) => {
+    let updatedFormData = [...formData];
+
+    updatedFormData = updatedFormData.map(param => {
+      if (param.parameter.parameterName === parameterName) {
+        if (param.parameter.parameterName === 'inputList') {
+          const existingItemIndex = param.values.findIndex(item => item.parameterValue === value);
+          if (existingItemIndex !== -1) {
+            // If value exists, update isSelected
+            return {
+              ...param,
+              values: param.values.map((item, index) => ({
+                ...item,
+                isSelected: index === existingItemIndex ? true : item.isSelected
+              }))
+            };
+          } else {
+            // If value doesn't exist, create new item
+            return {
+              ...param,
+              values: [...param.values, { displayName: value, parameterValue: value, isSelected: true }]
+            };
+          }
+        } else {
+          // For other parameters, update isSelected based on parameterValue
+          return {
+            ...param,
+            values: param.values.map(item => ({
+              ...item,
+              isSelected: item.parameterValue === value
+            }))
+          };
+        }
+      }
+      return param;
+    });
+
+    setFormData(updatedFormData);
   };
 
   const formatSampledParameterRequest = (parameterName, value) => {
@@ -80,11 +120,13 @@ export const CustomFormComponent = ({ parameters, onSubmit }) => {
           {param.type === 'dropDown' && <DropdownComponent param={param} handleChange={handleChange} />}
           {param.type === 'Checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
           {param.type === 'Radiobutton' && <RadioButtonComponent param={param} handleChange={handleChange} />}
-          {param.type === 'multiSelect' && <MultiSelectComponent param={param} handleChange={handleChange} />}
+          {param.type === 'agGrid' && <TableWithCustomDropdown param={param} handleChange={handleChange} />}
         </FormField>
       ))}
-      <Button value={'Reset'} onClick={handleReset} variant="secondary">Reset</Button>
-      <Button value={'Primary'} onClick={handleSubmit}>Submit</Button>
+      <StackLayout gap={1} direction="vertical" style={{ marginTop: '40px' }}>
+        <Button value={'Reset'} onClick={handleReset} variant="secondary">Reset</Button>
+        <Button value={'Primary'} onClick={handleSubmit}>Submit</Button>
+      </StackLayout>
     </FlowLayout>
   );
 };

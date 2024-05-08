@@ -1,45 +1,52 @@
-import React, { forwardRef, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { StackLayout, Input, Button } from '@salt-ds/core';
 
-export const TableWithCustomDropdown = forwardRef((props, ref) => {
+export const TableWithCustomDropdown = ({ param, handleChange }) => {
   const [gridApi, setGridApi] = useState(null);
-  const [rowData, setRowData] = useState([
-    { id: 1, headerName: 'Option 1' },
-    { id: 2, headerName: 'Option 2' },
-    { id: 3, headerName: 'Option 3' },
-    { id: 4, headerName: 'Option 4' },
-    { id: 5, headerName: 'Option 5' },
-    { id: 6, headerName: 'Option 6' },
-    // Add more sample data as needed
-  ]);
+  const [rowData, setRowData] = useState(param ? param.values : []);
   const [newItemName, setNewItemName] = useState('');
+
+  useEffect(() => {
+    if (param) {
+      setRowData(param.values);
+    }
+  }, [param]);
 
   // Column definitions for ag-Grid
   const columnDefs = [
     {
-      headerName: 'Header',
-      field: 'headerName',
+      headerName: param && param.parameter.displayName,
+      field: 'displayName',
       checkboxSelection: true,
       headerCheckboxSelection: true,
-      floatingFilter: true,
-      filter: true, 
+      floatingFilter: param && param?.parameter?.parameterName === 'inputList',
+      filter: param && param?.parameter?.parameterName === 'inputList',
     },
   ];
 
   // Add new item to the list
   const addItemToList = () => {
     if (newItemName.trim() !== '') {
-      const newItem = { id: rowData.length + 1, headerName: newItemName };
+      const newItem = { displayName: newItemName, parameterValue: newItemName, isSelected: false };
       setRowData([...rowData, newItem]);
+      handleChange(param.parameter.parameterName, newItem.parameterValue);
       setNewItemName('');
     }
   };
 
+  const handleSelectionChanged = () => {
+    const selectedNodes = gridApi.getSelectedNodes();
+    const selectedData = selectedNodes.map(node => node.data)[0];
+    if(selectedData) {
+      //handleChange(param.parameter.parameterName, selectedData.parameterValue)
+    }
+  };
+
   return (
-    <div className="ag-theme-alpine" style={{ height: '300px', width: '300px' }}>
+    <div className="ag-theme-alpine" style={{ height: '260px', width: '250px' }}>
       <AgGridReact
         onGridReady={({ api }) => {
           setGridApi(api);
@@ -48,15 +55,18 @@ export const TableWithCustomDropdown = forwardRef((props, ref) => {
         columnDefs={columnDefs}
         rowData={rowData}
         rowSelection="multiple"
+        onSelectionChanged={handleSelectionChanged}
       />
-      <StackLayout gap={1} direction="vertical" style={{ marginTop: '15px',marginBottom:'15px' }}>
-        <Input
-          value={newItemName}
-          onChange={(e) => setNewItemName(e.target.value)}
-          placeholder="Add new item name"
-        />
-        <Button onClick={addItemToList} style={{ width: '150px' }}>Add Item</Button>
-      </StackLayout>
+      {param?.parameter?.parameterName === 'inputList' && (
+        <StackLayout gap={1} direction="vertical" style={{ marginTop: '5px' }}>
+          <Input
+            value={newItemName}
+            onChange={(e) => setNewItemName(e.target.value)}
+            placeholder="Add new item name"
+          />
+          <Button onClick={addItemToList} style={{ width: '150px' }}>Add Item</Button>
+        </StackLayout>
+      )}
     </div>
   );
-});
+};

@@ -18,7 +18,6 @@ import { SaltProvider } from "@salt-ds/core";
 import "@salt-ds/theme/index.css";
 import { CustomFormComponent } from '../components/CustomFormComponent';
 import { parameters } from './fieldsData.json';
-import { TableWithCustomDropdown } from '../components/TableWithCustomDropdown';
 
 export const Form = () => {
 
@@ -28,8 +27,7 @@ export const Form = () => {
 
     return (<>
         <SaltProvider>
-            {/* <CustomFormComponent parameters={parameters} onSubmit={handleSubmit} /> */}
-            <TableWithCustomDropdown />
+            <CustomFormComponent parameters={parameters} onSubmit={handleSubmit} />
         </SaltProvider>
     </>
 

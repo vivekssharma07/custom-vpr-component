@@ -211,6 +211,108 @@
             },
             "description": null,
             "noSelect": "Please select a view"
+        },
+        {
+            "type": "agGrid",
+            "parameter": {
+                "displayName": "Currency",
+                "parameterName": "selectList"
+            },
+            "values": [
+                {
+                    "displayName": "All",
+                    "parameterValue": "ALL",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "AED",
+                    "parameterValue": "AED- UAE DIRHAM",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "INR",
+                    "parameterValue": "INR - INDIA RUPEE",
+                    "isSelected": false
+                }
+            ],
+            "mandatory": false,
+            "dynamic": {
+                "parents": [
+                    "sampleParameter"
+                ],
+                "children": [
+                ]
+            },
+            "description": null,
+            "noSelect": "Please select a view"
+        },
+        {
+            "type": "agGrid",
+            "parameter": {
+                "displayName": "Action Type",
+                "parameterName": "leftRightList"
+            },
+            "values": [
+                {
+                    "displayName": "Information",
+                    "parameterValue": "INFORMATION",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "Mandatory",
+                    "parameterValue": "MANDATORY",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "Voluntary",
+                    "parameterValue": "VOLUNTARY",
+                    "isSelected": true
+                }
+            ],
+            "mandatory": false,
+            "dynamic": {
+                "parents": [
+                    "sampleParameter"
+                ],
+                "children": [
+                ]
+            },
+            "description": null,
+            "noSelect": "Please select a view"
+        },
+        {
+            "type": "agGrid",
+            "parameter": {
+                "displayName": "Select Accounts or Accounts Group",
+                "parameterName": "inputList"
+            },
+            "values": [
+                {
+                    "displayName": "MultiSelect View",
+                    "parameterValue": "MA",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "CA View",
+                    "parameterValue": "CA",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "IP View",
+                    "parameterValue": "IP",
+                    "isSelected": false
+                }
+            ],
+            "mandatory": false,
+            "dynamic": {
+                "parents": [
+                    "sampleParameter"
+                ],
+                "children": [
+                ]
+            },
+            "description": null,
+            "noSelect": "Please select a view"
         }
     ]
 }
