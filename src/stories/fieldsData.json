@@ -1,4 +1,8 @@
 {
+    "name": "Plan Level Attribution - Daily",
+    "profileId": 52170,
+    "hasAccounts": false,
+    "Account": null,
     "parameters": [
         {
             "type": "dateRule",
@@ -44,50 +48,10 @@
             "noSelect": "Please Select a date"
         },
         {
-            "type": "dropDown",
+            "type": "dropdown",
             "parameter": {
-                "displayName": "Random Account Based Parameters",
-                "parameterName": "sampleParameter"
-            },
-            "values": [
-                {
-                    "displayName": "Value One",
-                    "parameterValue": "1",
-                    "isSelected": true
-                },
-                {
-                    "displayName": "Value Two",
-                    "parameterValue": "2",
-                    "isSelected": false
-                },
-                {
-                    "displayName": "Value Three",
-                    "parameterValue": "3",
-                    "isSelected": false
-                },
-                {
-                    "displayName": "Value Four",
-                    "parameterValue": "4",
-                    "isSelected": false
-                }
-            ],
-            "mandatory": true,
-            "dynamic": {
-                "parents": [
-                    
-                ],
-                "children": [
-                    "accountView"
-                ]
-            },
-            "description": null,
-            "noSelect": "Please select account"
-        },
-        {
-            "type": "dropDown",
-            "parameter": {
-                "displayName": "Accounting View",
-                "parameterName": "accountView"
+                "displayName": "Business Unit",
+                "parameterName": "BU"
             },
             "values": [
                 {
@@ -106,33 +70,223 @@
                     "isSelected": false
                 }
             ],
-            "mandatory": false,
+            "mandatory": true,
             "dynamic": {
-                "parents": [
-                    "sampleParameter"
-                ],
+                "parents": null,
                 "children": [
+                    "REPORT_ID",
+                    "REL_DT",
+                    "TP",
+                    "DTSTART",
+                    "DTENT"
                 ]
             },
             "description": null,
-            "noSelect": "Please select a view"
+            "noSelect": null
         },
         {
-            "type": "Checkbox",
+            "type": "selectlist",
+            "parameter": {
+                "displayName": "Report Name",
+                "parameterName": "REPORT_ID"
+            },
+            "values": [
+                {
+                    "displayName": "MA",
+                    "parameterValue": "MA",
+                    "isSelected": true
+                },
+                {
+                    "displayName": "CA",
+                    "parameterValue": "CA",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "IP",
+                    "parameterValue": "IP",
+                    "isSelected": true
+                }
+            ],
+            "mandatory": true,
+            "dynamic": {
+                "parents": null,
+                "children": [
+                    "REL_DT",
+                    "DTSTART",
+                    "DTENT"
+                ]
+            },
+            "description": null,
+            "noSelect": null
+        },
+        {
+            "type": "radio",
+            "parameter": {
+                "displayName": "Date Option",
+                "parameterName": "DATE_OPT"
+            },
+            "values": [
+                {
+                    "displayName": "Standard Time Period",
+                    "parameterValue": "STD_TP",
+                    "isSelected": true
+                },
+                {
+                    "displayName": "Date Range",
+                    "parameterValue": "DT_RANGE",
+                    "isSelected": false
+                }
+            ],
+            "mandatory": true,
+            "dynamic": {
+                "parents": null,
+                "children": null
+            },
+            "description": null,
+            "noSelect": null
+        },
+        {
+            "type": "dropdown",
+            "parameter": {
+                "displayName": "Relative Date",
+                "parameterName": "REL_DT"
+            },
+            "values": [],
+            "mandatory": true,
+            "dynamic": {
+                "parents": null,
+                "children": [
+                    "BU",
+                    "REL_DT"
+                ]
+            },
+            "description": null,
+            "noSelect": null
+        },
+        {
+            "type": "radio",
+            "parameter": {
+                "displayName": "Annualized or Cumulative",
+                "parameterName": "ANNUALIZED_CUMULATIVE"
+            },
+            "values": [
+                {
+                    "displayName": "Cumulative",
+                    "parameterValue": "CRORTYP",
+                    "isSelected": true
+                },
+                {
+                    "displayName": "Annualized",
+                    "parameterValue": "ARORTYPE",
+                    "isSelected": false
+                }
+            ],
+            "mandatory": true,
+            "dynamic": {
+                "parents": null,
+                "children": [
+                    "TP"
+                ]
+            },
+            "description": null,
+            "noSelect": null
+        },
+        {
+            "type": "dropdown",
+            "parameter": {
+                "displayName": "Time Period",
+                "parameterName": "TP"
+            },
+            "values": [],
+            "mandatory": true,
+            "dynamic": {
+                "parents": null,
+                "children": [
+                    "BU",
+                    "ANNUALIZED_CUMULATIVE"
+                ]
+            },
+            "description": null,
+            "noSelect": null
+        },
+        {
+            "type": "dropdown",
+            "parameter": {
+                "displayName": "Start Date",
+                "parameterName": "STSTART"
+            },
+            "values": [],
+            "mandatory": true,
+            "dynamic": {
+                "parents": null,
+                "children": [
+                    "BU",
+                    "REPORT_ID"
+                ]
+            },
+            "description": null,
+            "noSelect": null
+        },
+        {
+            "type": "dropdown",
+            "parameter": {
+                "displayName": "END Date",
+                "parameterName": "DTEND"
+            },
+            "values": [],
+            "mandatory": true,
+            "dynamic": {
+                "parents": null,
+                "children": [
+                    "BU",
+                    "REPORT_ID"
+                ]
+            },
+            "description": null,
+            "noSelect": null
+        },
+        {
+            "type": "radio",
+            "parameter": {
+                "displayName": "Layout Option",
+                "parameterName": "LAYOUT_OPT"
+            },
+            "values": [
+                {
+                    "displayName": "Portrait",
+                    "parameterValue": "Portrait",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "Landscape",
+                    "parameterValue": "Landscape",
+                    "isSelected": false
+                }
+            ],
+            "mandatory": true,
+            "dynamic": {
+                "parents": null,
+                "children": null
+            },
+            "description": null,
+            "noSelect": null
+        },
+        {
+            "type": "checkbox",
             "parameter": {
                 "displayName": "Output Type",
-                "parameterName": "opType"
+                "parameterName": "OUTPUT_TYPE"
             },
             "values": [
                 {
                     "displayName": "PDF",
                     "parameterValue": "PDF",
-                    "isSelected": false
+                    "isSelected": true
                 },
                 {
                     "displayName": "HTML",
                     "parameterValue": "HTML",
-                    "isSelected": true
+                    "isSelected": false
                 },
                 {
                     "displayName": "XLS",
@@ -142,174 +296,8 @@
             ],
             "mandatory": false,
             "dynamic": {
-                "parents": [
-                ],
-                "children": [
-                ]
-            },
-            "description":null,
-            "noSelect": "Please select a view"
-        },
-        {
-            "type": "Radiobutton",
-            "parameter": {
-                "displayName": "Select Account Type",
-                "parameterName": "acct"
-            },
-            "values": [
-                {
-                    "displayName": "All Securities Accounts (opened or closed)",
-                    "parameterValue": "orc",
-                    "isSelected": false
-                },
-                {
-                    "displayName": "Expection Account vs Relationship",
-                    "parameterValue": "avr",
-                    "isSelected": false
-                }
-            ],
-            "mandatory": true,
-            "dynamic": {
-                "parents": [
-                ],
-                "children": [
-                ]
-            },
-            "description": null,
-            "noSelect": "Please select a view"
-        },
-        {
-            "type": "multiSelect",
-            "parameter": {
-                "displayName": "Multi Select",
-                "parameterName": "multiSelectView"
-            },
-            "values": [
-                {
-                    "displayName": "MultiSelect View",
-                    "parameterValue": "MA",
-                    "isSelected": true
-                },
-                {
-                    "displayName": "CA View",
-                    "parameterValue": "CA",
-                    "isSelected": true
-                },
-                {
-                    "displayName": "IP View",
-                    "parameterValue": "IP",
-                    "isSelected": true
-                }
-            ],
-            "mandatory": false,
-            "dynamic": {
-                "parents": [
-                    "sampleParameter"
-                ],
-                "children": [
-                ]
-            },
-            "description": null,
-            "noSelect": "Please select a view"
-        },
-        {
-            "type": "agGrid",
-            "parameter": {
-                "displayName": "Currency",
-                "parameterName": "selectList"
-            },
-            "values": [
-                {
-                    "displayName": "All",
-                    "parameterValue": "ALL",
-                    "isSelected": false
-                },
-                {
-                    "displayName": "AED",
-                    "parameterValue": "AED- UAE DIRHAM",
-                    "isSelected": false
-                },
-                {
-                    "displayName": "INR",
-                    "parameterValue": "INR - INDIA RUPEE",
-                    "isSelected": false
-                }
-            ],
-            "mandatory": false,
-            "dynamic": {
-                "parents": [
-                    "sampleParameter"
-                ],
-                "children": [
-                ]
-            },
-            "description": null,
-            "noSelect": "Please select a view"
-        },
-        {
-            "type": "agGrid",
-            "parameter": {
-                "displayName": "Action Type",
-                "parameterName": "leftRightList"
-            },
-            "values": [
-                {
-                    "displayName": "Information",
-                    "parameterValue": "INFORMATION",
-                    "isSelected": false
-                },
-                {
-                    "displayName": "Mandatory",
-                    "parameterValue": "MANDATORY",
-                    "isSelected": false
-                },
-                {
-                    "displayName": "Voluntary",
-                    "parameterValue": "VOLUNTARY",
-                    "isSelected": true
-                }
-            ],
-            "mandatory": false,
-            "dynamic": {
-                "parents": [
-                    "sampleParameter"
-                ],
-                "children": [
-                ]
-            },
-            "description": null,
-            "noSelect": "Please select a view"
-        },
-        {
-            "type": "agGrid",
-            "parameter": {
-                "displayName": "Select Accounts or Accounts Group",
-                "parameterName": "inputList"
-            },
-            "values": [
-                {
-                    "displayName": "MultiSelect View",
-                    "parameterValue": "MA",
-                    "isSelected": false
-                },
-                {
-                    "displayName": "CA View",
-                    "parameterValue": "CA",
-                    "isSelected": false
-                },
-                {
-                    "displayName": "IP View",
-                    "parameterValue": "IP",
-                    "isSelected": false
-                }
-            ],
-            "mandatory": false,
-            "dynamic": {
-                "parents": [
-                    "sampleParameter"
-                ],
-                "children": [
-                ]
+                "parents": null,
+                "children": null
             },
             "description": null,
             "noSelect": "Please select a view"

@@ -15,6 +15,18 @@ export const TableWithCustomDropdown = ({ param, handleChange }) => {
     }
   }, [param]);
 
+  useEffect(() => {
+    if (gridApi) {
+      // Pre-select checkboxes based on isSelected property
+      gridApi.forEachNode(node => {
+        console.log("Node Data ",node.data)
+        if (node.data.isSelected) {
+          node.setSelected(true);
+        }
+      });
+    }
+  }, [gridApi]);
+
   // Column definitions for ag-Grid
   const columnDefs = [
     {
@@ -39,11 +51,13 @@ export const TableWithCustomDropdown = ({ param, handleChange }) => {
 
   const handleSelectionChanged = () => {
     const selectedNodes = gridApi.getSelectedNodes();
-    const selectedData = selectedNodes.map(node => node.data)[0];
-    if(selectedData) {
-      //handleChange(param.parameter.parameterName, selectedData.parameterValue)
+    const selectedData = selectedNodes.map(node => node.data);
+    if (selectedData) {
+      handleChange(param.parameter.parameterName, selectedData)
     }
   };
+
+  
 
   return (
     <div className="ag-theme-alpine" style={{ height: '260px', width: '250px' }}>

@@ -1,69 +1,47 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, FlowLayout, FormField, FormFieldLabel, StackLayout } from '@salt-ds/core';
+//import { Button, FlowLayout, FormField, FormFieldLabel, StackLayout } from '@salt-ds/core';
 import { RadioButtonComponent } from '../RadioComponent';
 import { CheckboxComponent } from '../CheckboxComponent';
 import { DateRuleComponent } from '../DateRuleComponent';
 import { DropdownComponent } from '../DropDownComponent';
 import { TableWithCustomDropdown } from '../TableWithCustomDropdown';
+import { FormField, FormFieldLabel, FlexLayout, FlexItem, Button, H1 } from '@salt-ds/core';
 
-export const CustomFormComponent = ({ parameters, onSubmit }) => {
+export const CustomFormComponent = ({ parameters, onSubmit ,setAccountDropdownClicked}) => {
   // State to manage form data
   const [formData, setFormData] = useState(parameters);
 
-  // Handler function to update form data on change
-  const handleChangeOld = (parameterName, value) => {
-    if (parameterName === 'sampleParameter') {
-      const formatData = formatSampledParameterRequest(parameterName, value)
-      console.log("On Change ", formatData)
-    }
-
-    // Update form data based on parameterName and value
-    setFormData(prevState => prevState.map(param => ({
-      ...param,
-      values: param.parameter.parameterName === parameterName
-        ? param.values.map(item => ({ ...item, isSelected: item.parameterValue === value }))
-        : param.values
-    })));
-  };
+  useEffect(() => {
+    // Update formData whenever parameters change
+    setFormData(parameters);
+  }, [parameters]);
 
   const handleChange = (parameterName, value) => {
-    let updatedFormData = [...formData];
+    if (parameterName === 'effDt') {
+      const formatData = formatSampledParameterRequest(parameterName, value)
+      setAccountDropdownClicked(formatData)
+    }
 
-    updatedFormData = updatedFormData.map(param => {
+    let updatedFormData = formData.map(param => {
       if (param.parameter.parameterName === parameterName) {
-        if (param.parameter.parameterName === 'inputList') {
-          const existingItemIndex = param.values.findIndex(item => item.parameterValue === value);
-          if (existingItemIndex !== -1) {
-            // If value exists, update isSelected
-            return {
-              ...param,
-              values: param.values.map((item, index) => ({
-                ...item,
-                isSelected: index === existingItemIndex ? true : item.isSelected
-              }))
-            };
-          } else {
-            // If value doesn't exist, create new item
-            return {
-              ...param,
-              values: [...param.values, { displayName: value, parameterValue: value, isSelected: true }]
-            };
-          }
+        if (param.type === 'selectlist') {
+          const updatedValues = param.values.map(item => ({
+            ...item,
+            isSelected: value.some(val => val.parameterValue === item.parameterValue) ? true : item.isSelected
+          }));
+          return { ...param, values: updatedValues };
         } else {
           // For other parameters, update isSelected based on parameterValue
-          return {
-            ...param,
-            values: param.values.map(item => ({
-              ...item,
-              isSelected: item.parameterValue === value
-            }))
-          };
+          const updatedValues = param.values.map(item => ({
+            ...item,
+            isSelected: item.parameterValue === value
+          }));
+          return { ...param, values: updatedValues };
         }
       }
       return param;
     });
-
     setFormData(updatedFormData);
   };
 
@@ -112,22 +90,35 @@ export const CustomFormComponent = ({ parameters, onSubmit }) => {
   };
 
   return (
-    <FlowLayout style={{ width: "350px" }}>
-      {formData.map(param => (
-        <FormField key={param.parameter.parameterName}>
-          <FormFieldLabel>{param.parameter.displayName}</FormFieldLabel>
-          {param.type === 'dateRule' && <DateRuleComponent param={param} handleChange={handleChange} />}
-          {param.type === 'dropDown' && <DropdownComponent param={param} handleChange={handleChange} />}
-          {param.type === 'Checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
-          {param.type === 'Radiobutton' && <RadioButtonComponent param={param} handleChange={handleChange} />}
-          {param.type === 'agGrid' && <TableWithCustomDropdown param={param} handleChange={handleChange} />}
-        </FormField>
-      ))}
-      <StackLayout gap={1} direction="vertical" style={{ marginTop: '40px' }}>
-        <Button value={'Reset'} onClick={handleReset} variant="secondary">Reset</Button>
-        <Button value={'Primary'} onClick={handleSubmit}>Submit</Button>
-      </StackLayout>
-    </FlowLayout>
+    <FlexLayout direction="column" style={{ width: "350px" }}>
+      {formData && formData?.length ? (
+        formData.map(param => (
+          <FlexItem key={param.parameter.parameterName}>
+            <FormField labelPlacement="left">
+              <FormFieldLabel>{param.parameter.displayName}</FormFieldLabel>
+              {param.type === 'dateRule' && <DateRuleComponent param={param} handleChange={handleChange} />}
+              {param.type === 'dropdown' && <DropdownComponent param={param} handleChange={handleChange} />}
+              {param.type === 'checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
+              {param.type === 'radio' && <RadioButtonComponent param={param} handleChange={handleChange} />}
+              {param.type === 'selectlist' && <TableWithCustomDropdown param={param} handleChange={handleChange} />}
+            </FormField>
+          </FlexItem>
+        ))
+      ) : (
+        <FlexItem>
+          <H1>Data not found</H1>
+        </FlexItem>
+      )}
+
+      {formData && formData?.length ? ( // Only render buttons if formData is not empty
+        <FlexItem style={{ marginTop: '40px' }}>
+          <FlexLayout direction="vertical" gap={1}>
+            <Button value={'Reset'} onClick={handleReset} variant="secondary">Reset</Button>
+            <Button value={'Primary'} onClick={handleSubmit}>Submit</Button>
+          </FlexLayout>
+        </FlexItem>
+      ) : ''}
+    </FlexLayout>
   );
 };
 
@@ -137,7 +128,7 @@ CustomFormComponent.propTypes = {
       parameterName: PropTypes.string.isRequired,
       displayName: PropTypes.string.isRequired,
     }).isRequired,
-    type: PropTypes.oneOf(['Radiobutton', 'Checkbox', 'dateRule', 'dropDown']).isRequired,
+    type: PropTypes.oneOf(['radio', 'checkbox', 'dateRule', 'dropdown']).isRequired,
     values: PropTypes.arrayOf(PropTypes.shape({
       parameterValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       displayName: PropTypes.string.isRequired,
