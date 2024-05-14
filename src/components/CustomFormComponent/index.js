@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-//import { Button, FlowLayout, FormField, FormFieldLabel, StackLayout } from '@salt-ds/core';
 import { RadioButtonComponent } from '../RadioComponent';
 import { CheckboxComponent } from '../CheckboxComponent';
 import { DateRuleComponent } from '../DateRuleComponent';
 import { DropdownComponent } from '../DropDownComponent';
 import { TableWithCustomDropdown } from '../TableWithCustomDropdown';
-import { FormField, FormFieldLabel, FlexLayout, FlexItem, Button, H1 } from '@salt-ds/core';
+import { FormField, FormFieldLabel, FlexLayout, FlexItem, Button, H1, } from '@salt-ds/core';
 
-export const CustomFormComponent = ({ parameters, onSubmit ,setAccountDropdownClicked}) => {
+export const CustomFormComponent = ({ parameters, onSubmit, setCurrentSelectedParameter }) => {
   // State to manage form data
   const [formData, setFormData] = useState(parameters);
 
@@ -18,10 +17,7 @@ export const CustomFormComponent = ({ parameters, onSubmit ,setAccountDropdownCl
   }, [parameters]);
 
   const handleChange = (parameterName, value) => {
-    if (parameterName === 'effDt') {
-      const formatData = formatSampledParameterRequest(parameterName, value)
-      setAccountDropdownClicked(formatData)
-    }
+    setCurrentSelectedParameter({parameterName, value})
 
     let updatedFormData = formData.map(param => {
       if (param.parameter.parameterName === parameterName) {
@@ -43,26 +39,6 @@ export const CustomFormComponent = ({ parameters, onSubmit ,setAccountDropdownCl
       return param;
     });
     setFormData(updatedFormData);
-  };
-
-  const formatSampledParameterRequest = (parameterName, value) => {
-    const profileId = 12345;
-    const parameterToUpdate = [];
-    const parentParameters = {};
-
-    // Find the parameter object in the form data based on parameterName
-    const param = formData.find(param => param.parameter.parameterName === parameterName);
-
-    // Find the child parameter name from the dynamic property
-    const child = param?.dynamic?.children[0];
-
-    // If parameter and child exist, update parameterToUpdate and parentParameters
-    if (param && child) {
-      parameterToUpdate.push(child);
-      parentParameters[parameterName] = [{ parameterValue: value }];
-    }
-
-    return { profileId, parameterToUpdate, parentParameters };
   };
 
   // Handle form submission
@@ -90,17 +66,17 @@ export const CustomFormComponent = ({ parameters, onSubmit ,setAccountDropdownCl
   };
 
   return (
-    <FlexLayout direction="column" style={{ width: "350px" }}>
+    <FlexLayout direction="column">
       {formData && formData?.length ? (
-        formData.map(param => (
+        formData.map((param, index) => (
           <FlexItem key={param.parameter.parameterName}>
             <FormField labelPlacement="left">
               <FormFieldLabel>{param.parameter.displayName}</FormFieldLabel>
-              {param.type === 'dateRule' && <DateRuleComponent param={param} handleChange={handleChange} />}
-              {param.type === 'dropdown' && <DropdownComponent param={param} handleChange={handleChange} />}
-              {param.type === 'checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
-              {param.type === 'radio' && <RadioButtonComponent param={param} handleChange={handleChange} />}
-              {param.type === 'selectlist' && <TableWithCustomDropdown param={param} handleChange={handleChange} />}
+                {param.type === 'dateRule' && <DateRuleComponent param={param} handleChange={handleChange} />}
+                {param.type === 'dropdown' && <DropdownComponent param={param} handleChange={handleChange} />}
+                {param.type === 'checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
+                {param.type === 'radio' && <RadioButtonComponent param={param} handleChange={handleChange} />}
+                {param.type === 'selectlist' && <TableWithCustomDropdown param={param} handleChange={handleChange} />}
             </FormField>
           </FlexItem>
         ))
@@ -113,7 +89,7 @@ export const CustomFormComponent = ({ parameters, onSubmit ,setAccountDropdownCl
       {formData && formData?.length ? ( // Only render buttons if formData is not empty
         <FlexItem style={{ marginTop: '40px' }}>
           <FlexLayout direction="vertical" gap={1}>
-            <Button value={'Reset'} onClick={handleReset} variant="secondary">Reset</Button>
+            <Button value={'Reset'} onClick={handleReset} variant="secondary">Close</Button>
             <Button value={'Primary'} onClick={handleSubmit}>Submit</Button>
           </FlexLayout>
         </FlexItem>

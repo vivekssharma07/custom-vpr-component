@@ -22,11 +22,4 @@ export const Primary = {
   },
 };
 
-export const Secondary = {
-  args: {
-    label: 'Form',
-  },
-};
-
-
 

@@ -21,63 +21,87 @@ import { parameters } from './fieldsData.json';
 import axios from 'axios';
 
 export const Form = () => {
-    const [data, setData] = useState([]);
-    const [isAccountDropdownClicked, setAccountDropdownClicked] = useState();
+    const [rowData, setRowData] = useState([]);
+    const [currentSelectParameter, setCurrentSelectedParameter] = useState({});
+
     const handleSubmit = (formData) => {
         console.log("On Form Submit", formData);
     };
 
+    const fetchAccountData = async (reqBody) => {
+        try {
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+
+            const URL = 'https://jsonplaceholder.typicode.com/todos';
+            //const response = await axios.post(URL, reqBody, { headers });
+            //console.log("Response ", response);
+            //setRowData(parameters);
+        } catch (error) {
+            console.error("Error fetching account data: ", error);
+        }
+    };
+
+    // Define a function to fetch data
+    const fetchInitialData = async () => {
+        try {
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+
+            //const response = await axios.get('https://jsonplaceholder.typicode.com/todos/', { headers });
+            // Update state with the fetched data
+            setRowData(parameters);
+        } catch (error) {
+            // Handle any errors that occur during the API call
+            console.log("Error :", error)
+        }
+    };
+    
+    const formatSampledParameterRequest = (parameterName, value) => {
+        let parameterToUpdate = [];
+        const parentParameters = [];
+
+        // Find the parameter object in the form data based on parameterName
+        const param = rowData.find(param => param.parameter.parameterName === parameterName);
+
+        // Find the child parameter name from the dynamic property
+        const child = param?.dynamic?.children;
+
+        // If parameter and child exist, update parameterToUpdate and parentParameters
+        if (param && child) {
+            parameterToUpdate = child;
+
+            // Add the parent parameter to the parentParameters array
+            parentParameters.push({
+                name: parameterName,
+                values: [value]
+            });
+        }
+
+        return { parameterToUpdate, parentParameters };
+    };
+
     useEffect(() => {
-        console.log("isAccountDropdownClicked",isAccountDropdownClicked)
-         // Define a function to fetch data
-         const fetchAccountData = async () => {
-            try {
-                // Set headers with parameters
-                const headers = {
-                    'Content-Type': 'application/json', // Example header
-                    //'Authorization': 'Bearer tscott', // Example header with token
-                };
-
-                // Make the API call using Axios with headers
-                const response = await axios.get('https://jsonplaceholder.typicode.com/todos/', { headers });
-                // Update state with the fetched data
-                setData(parameters);
-            } catch (error) {
-                // Handle any errors that occur during the API call
-                console.log("Error :", error)
-            }
-        };
-        // Call the fetch data function when the component mounts
-        fetchAccountData();
-
-    },[isAccountDropdownClicked])
+        console.log("currentSelectParameter", currentSelectParameter)
+        if (currentSelectParameter?.parameterName === 'BU' || currentSelectParameter?.parameterName == 'ANNUALIZED_CUMULATIVE') {
+            const reqBody = formatSampledParameterRequest(currentSelectParameter?.parameterName, currentSelectParameter?.value)
+            console.log("Request Body ",reqBody)
+            fetchAccountData(reqBody)
+        }
+    }, [currentSelectParameter])
 
     useEffect(() => {
-        // Define a function to fetch data
-        const fetchData = async () => {
-            try {
-                // Set headers with parameters
-                const headers = {
-                    'Content-Type': 'application/json', // Example header
-                    //'Authorization': 'Bearer tscott', // Example header with token
-                };
-
-                // Make the API call using Axios with headers
-                const response = await axios.get('https://jsonplaceholder.typicode.com/todos/', { headers });
-                // Update state with the fetched data
-                setData(parameters);
-            } catch (error) {
-                // Handle any errors that occur during the API call
-                console.log("Error :", error)
-            }
-        };
         // Call the fetch data function when the component mounts
-        fetchData();
+        fetchInitialData();
     }, []);
+
+    console.log("Row Data", rowData)
 
     return (<>
         <SaltProvider>
-            <CustomFormComponent parameters={data} onSubmit={handleSubmit} setAccountDropdownClicked={setAccountDropdownClicked}/>
+            <CustomFormComponent parameters={rowData} onSubmit={handleSubmit} setCurrentSelectedParameter={setCurrentSelectedParameter} />
         </SaltProvider>
     </>
 
