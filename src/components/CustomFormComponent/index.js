@@ -7,18 +7,16 @@ import { DropdownComponent } from '../DropDownComponent';
 import { TableWithCustomDropdown } from '../TableWithCustomDropdown';
 import { FormField, FormFieldLabel, FlexLayout, FlexItem, Button, H1, } from '@salt-ds/core';
 
-export const CustomFormComponent = ({ parameters, onSubmit, setCurrentSelectedParameter }) => {
+export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedParameter,setFormData }) => {
   // State to manage form data
-  const [formData, setFormData] = useState(parameters);
+  //const [formData, setFormData] = useState(parameters);
 
-  useEffect(() => {
-    // Update formData whenever parameters change
-    setFormData(parameters);
-  }, [parameters]);
+  // useEffect(() => {
+  //   // Update formData whenever parameters change
+  //   setFormData(parameters);
+  // }, [parameters]);
 
   const handleChange = (parameterName, value) => {
-    setCurrentSelectedParameter({parameterName, value})
-
     let updatedFormData = formData.map(param => {
       if (param.parameter.parameterName === parameterName) {
         if (param.type === 'selectlist') {
@@ -39,6 +37,7 @@ export const CustomFormComponent = ({ parameters, onSubmit, setCurrentSelectedPa
       return param;
     });
     setFormData(updatedFormData);
+    setCurrentSelectedParameter({parameterName, value})
   };
 
   // Handle form submission

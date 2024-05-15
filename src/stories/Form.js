@@ -46,11 +46,11 @@ const apiResponse = [{
     },
     "description": null,
     "noSelect": null,
-    "isDate" :true
+    "isDate": true
 }]
 
 export const Form = () => {
-    const [rowData, setRowData] = useState([]);
+    const [formData, setFormData] = useState([]);
     const [currentSelectParameter, setCurrentSelectedParameter] = useState({});
 
     const handleSubmit = (formData) => {
@@ -65,9 +65,9 @@ export const Form = () => {
 
             const URL = 'https://jsonplaceholder.typicode.com/todos';
             //const response = await axios.post(URL, reqBody, { headers });
-            updateRowData(apiResponse)
+            // updateformData(apiResponse)
             //console.log("Response ", response);
-            //setRowData(parameters);
+            //setFormData(parameters);
         } catch (error) {
             console.error("Error fetching account data: ", error);
         }
@@ -82,56 +82,76 @@ export const Form = () => {
 
             //const response = await axios.get('https://jsonplaceholder.typicode.com/todos/', { headers });
             // Update state with the fetched data
-            setRowData(parameters);
+            setFormData(parameters);
         } catch (error) {
             // Handle any errors that occur during the API call
             console.log("Error :", error)
         }
     };
-    
-    const formatSampledParameterRequest = (parameterName, value) => {
+
+    const formatSampledParameterRequest = (parameterName, selectedValue) => {
         let parameterToUpdate = [];
         const parentParameters = [];
 
-        // Find the parameter object in the form data based on parameterName
-        const param = rowData.find(param => param.parameter.parameterName === parameterName);
+        const param = formData.find(param => param.parameter.parameterName === parameterName);
+        if (!param) return { parameterToUpdate, parentParameters };
 
-        // Find the child parameter name from the dynamic property
-        const child = param?.dynamic?.children;
+        if (parameterName === 'BU') {
+            const filteredData = formData.filter(param =>
+                param.parameter.parameterName !== parameterName &&
+                param.dynamic &&
+                param.dynamic.parents &&
+                param.dynamic.parents.length === 1 &&
+                param.dynamic.parents.includes(parameterName)
+            );
 
-        // If parameter and child exist, update parameterToUpdate and parentParameters
-        if (param && child) {
-            parameterToUpdate = child;
+            if (filteredData.length > 0) {
+                parameterToUpdate = filteredData[0].parameter.parameterName;
+                parentParameters.push({
+                    name: parameterName,
+                    values: [selectedValue]
+                });
+            }
+        } else {
+            const buParam = formData.find(param => param.parameter.parameterName === 'BU');
+            if (buParam) {
+                const buValue = buParam.values.filter(value => value.isSelected).map(value => value.parameterValue);
+                parentParameters.push({
+                    name: "BU",
+                    values: buValue
+                });
+            }
 
-            // Add the parent parameter to the parentParameters array
+            const values = param.values.filter(value => value.isSelected).map(value => value.parameterValue);
+            parameterToUpdate = param.dynamic?.children || [];
             parentParameters.push({
                 name: parameterName,
-                values: [value]
+                values: values
             });
         }
 
         return { parameterToUpdate, parentParameters };
     };
 
-    const updateRowData = (apiResponse) => {
-        const updatedRowData = rowData.map(row => {
+    const updateformData = (apiResponse) => {
+        const updatedformData = formData.map(row => {
             const matchingParam = apiResponse.find(apiParam => apiParam.parameter.parameterName === row.parameter.parameterName);
             if (matchingParam) {
                 return { ...row, values: matchingParam.values };
             }
             return row;
         });
-        setRowData(updatedRowData);
+        setFormData(updatedformData);
         setCurrentSelectedParameter({})
     };
 
     useEffect(() => {
         console.log("currentSelectParameter", currentSelectParameter)
-        if (currentSelectParameter?.parameterName === 'BU' || currentSelectParameter?.parameterName == 'ANNUALIZED_CUMULATIVE') {
-            const reqBody = formatSampledParameterRequest(currentSelectParameter?.parameterName, currentSelectParameter?.value)
-            console.log("Request Body ",reqBody)
-            fetchAccountData(reqBody)
-        }
+        //if (currentSelectParameter?.parameterName === 'BU' || currentSelectParameter?.parameterName == 'ANNUALIZED_CUMULATIVE') {
+        const reqBody = formatSampledParameterRequest(currentSelectParameter?.parameterName, currentSelectParameter?.value)
+        console.log("Request Body ", reqBody)
+        //fetchAccountData(reqBody)
+        //}
     }, [currentSelectParameter])
 
     useEffect(() => {
@@ -139,11 +159,13 @@ export const Form = () => {
         fetchInitialData();
     }, []);
 
-    console.log("Row Data", rowData)
-
     return (<>
         <SaltProvider>
-            <CustomFormComponent parameters={rowData} onSubmit={handleSubmit} setCurrentSelectedParameter={setCurrentSelectedParameter} />
+            <CustomFormComponent 
+                formData={formData}
+                onSubmit={handleSubmit}
+                setCurrentSelectedParameter={setCurrentSelectedParameter} 
+                setFormData={setFormData} />
         </SaltProvider>
     </>
 
