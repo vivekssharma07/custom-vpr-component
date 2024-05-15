@@ -1,5 +1,6 @@
 import { fn } from '@storybook/test';
 import {Form} from './Form'
+import {SecondaryForm} from './SecondaryForm'
 
 export default {
   title: 'Example/Form',
@@ -21,5 +22,11 @@ export const Primary = {
     label: 'Form',
   },
 };
+
+export const BaseStory = () => (
+  <>
+    <SecondaryForm />
+  </>
+);
 
 

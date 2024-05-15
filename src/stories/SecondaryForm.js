@@ -17,7 +17,7 @@ import { SaltProvider } from "@salt-ds/core";
 // Import theme CSS
 import "@salt-ds/theme/index.css";
 import { CustomFormComponent } from '../components/CustomFormComponent';
-import { mockData } from './fieldsData.js';
+import { secondaryMockData } from './fieldsData';
 import axios from 'axios';
 
 const apiResponse = [{
@@ -49,8 +49,8 @@ const apiResponse = [{
     "isDate": true
 }]
 
-export const Form = () => {
-    const [formData, setFormData] = useState(mockData?.parameters);
+export const SecondaryForm = () => {
+    const [formData, setFormData] = useState(secondaryMockData?.parameters);
     const [currentSelectParameter, setCurrentSelectedParameter] = useState({});
 
     const handleSubmit = (formData) => {
