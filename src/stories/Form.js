@@ -20,6 +20,35 @@ import { CustomFormComponent } from '../components/CustomFormComponent';
 import { parameters } from './fieldsData.json';
 import axios from 'axios';
 
+const apiResponse = [{
+    "type": "dropdown",
+    "parameter": {
+        "displayName": "Time Period",
+        "parameterName": "TP"
+    },
+    "values": [{
+        "displayName": "Weekly",
+        "parameterValue": "Weekly",
+        "isSelected": true
+    },
+    {
+        "displayName": "Monthly",
+        "parameterValue": "Monthly",
+        "isSelected": false
+    }],
+    "mandatory": true,
+    "dynamic": {
+        "parents": null,
+        "children": [
+            "BU",
+            "ANNUALIZED_CUMULATIVE"
+        ]
+    },
+    "description": null,
+    "noSelect": null,
+    "isDate" :true
+}]
+
 export const Form = () => {
     const [rowData, setRowData] = useState([]);
     const [currentSelectParameter, setCurrentSelectedParameter] = useState({});
@@ -36,6 +65,7 @@ export const Form = () => {
 
             const URL = 'https://jsonplaceholder.typicode.com/todos';
             //const response = await axios.post(URL, reqBody, { headers });
+            updateRowData(apiResponse)
             //console.log("Response ", response);
             //setRowData(parameters);
         } catch (error) {
@@ -81,6 +111,18 @@ export const Form = () => {
         }
 
         return { parameterToUpdate, parentParameters };
+    };
+
+    const updateRowData = (apiResponse) => {
+        const updatedRowData = rowData.map(row => {
+            const matchingParam = apiResponse.find(apiParam => apiParam.parameter.parameterName === row.parameter.parameterName);
+            if (matchingParam) {
+                return { ...row, values: matchingParam.values };
+            }
+            return row;
+        });
+        setRowData(updatedRowData);
+        setCurrentSelectedParameter({})
     };
 
     useEffect(() => {
