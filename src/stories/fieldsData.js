@@ -1,5 +1,4 @@
-export const mockData =
-{
+export const mockData = {
     "name": "Plan Level Attribution - Daily",
     "profileId": 52170,
     "hasAccounts": false,
@@ -11,30 +10,15 @@ export const mockData =
                 "displayName": "Business Unit",
                 "parameterName": "BU"
             },
-            "values": [
-                {
-                    "displayName": "00206",
-                    "parameterValue": "00206",
-                    "isSelected": true
-                },
-                {
-                    "displayName": "00207",
-                    "parameterValue": "00207",
-                    "isSelected": false
-                }
-            ],
+            "values": [{
+                "displayName": "BU",
+                "parameterValue": "00206",
+                "isSelected": true
+            }],
             "mandatory": true,
             "dynamic": {
-                "parents": [
-                    "BU"
-                ],
-                "children": [
-                    "REPORT_ID",
-                    "REL_DT",
-                    "TP",
-                    "DTSTART",
-                    "DTENT"
-                ]
+                "parents": [],
+                "children": ["REPORT_ID", "REL_DT", "TP", "DTSTART", "DTEND"]
             },
             "description": null,
             "noSelect": null
@@ -45,26 +29,11 @@ export const mockData =
                 "displayName": "Report Name",
                 "parameterName": "REPORT_ID"
             },
-            "values": [{
-                "displayName": "Report Name",
-                "parameterValue": "REPORT_NAME",
-                "isSelected": false
-            },
-            {
-                "displayName": "Report 2",
-                "parameterValue": "REPORT2",
-                "isSelected": false
-            }],
+            "values": [],
             "mandatory": true,
             "dynamic": {
-                "parents": [
-                    "BU"
-                ],
-                "children": [
-                    "REL_DT",
-                    "DTSTART",
-                    "DTENT"
-                ]
+                "parents": ["BU"],
+                "children": ["REL_DT", "DTSTART", "DTENT"]
             },
             "description": null,
             "noSelect": null
@@ -85,7 +54,7 @@ export const mockData =
                     "displayName": "Date Range",
                     "parameterValue": "DT_RANGE",
                     "isSelected": false
-                }
+                },
             ],
             "mandatory": true,
             "dynamic": {
@@ -104,11 +73,8 @@ export const mockData =
             "values": [],
             "mandatory": true,
             "dynamic": {
-                "parents": null,
-                "children": [
-                    "BU",
-                    "REPORT_ID"
-                ]
+                "parents": ["BU", "REPORT_ID"],
+                "children": []
             },
             "description": null,
             "noSelect": null
@@ -134,9 +100,7 @@ export const mockData =
             "mandatory": true,
             "dynamic": {
                 "parents": null,
-                "children": [
-                    "TP"
-                ]
+                "children": ["TP"]
             },
             "description": null,
             "noSelect": null
@@ -150,11 +114,8 @@ export const mockData =
             "values": [],
             "mandatory": true,
             "dynamic": {
-                "parents": null,
-                "children": [
-                    "BU",
-                    "ANNUALIZED_CUMULATIVE"
-                ]
+                "parents": ["BU", "ANNUALIZED_CUMULATIVE"],
+                "children": [],
             },
             "description": null,
             "noSelect": null
@@ -163,16 +124,13 @@ export const mockData =
             "type": "dropdown",
             "parameter": {
                 "displayName": "Start Date",
-                "parameterName": "STSTART"
+                "parameterName": "DTSTART"
             },
             "values": [],
             "mandatory": true,
             "dynamic": {
-                "parents": null,
-                "children": [
-                    "BU",
-                    "REPORT_ID"
-                ]
+                "parents": ["BU", "REPORT_ID"],
+                "children": []
             },
             "description": null,
             "noSelect": null
@@ -186,11 +144,8 @@ export const mockData =
             "values": [],
             "mandatory": true,
             "dynamic": {
-                "parents": null,
-                "children": [
-                    "BU",
-                    "REPORT_ID"
-                ]
+                "parents": ["BU", "REPORT_ID"],
+                "children": []
             },
             "description": null,
             "noSelect": null
@@ -211,7 +166,7 @@ export const mockData =
                     "displayName": "Landscape",
                     "parameterValue": "Landscape",
                     "isSelected": false
-                }
+                },
             ],
             "mandatory": true,
             "dynamic": {

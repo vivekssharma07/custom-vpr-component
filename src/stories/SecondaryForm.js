@@ -82,7 +82,7 @@ export const SecondaryForm = () => {
 
             //const response = await axios.get('https://jsonplaceholder.typicode.com/todos/', { headers });
             // Update state with the fetched data
-            setFormData(parameters);
+            //setFormData(parameters);
         } catch (error) {
             // Handle any errors that occur during the API call
             console.log("Error :", error)

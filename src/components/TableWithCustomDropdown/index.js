@@ -3,29 +3,25 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { StackLayout, Input, Button } from '@salt-ds/core';
+import { CheckboxRenderer } from './CheckboxRenderer';
 
 export const TableWithCustomDropdown = ({ param, handleChange }) => {
   const [gridApi, setGridApi] = useState(null);
-  const [rowData, setRowData] = useState(param ? param.values : []);
+  const [rowData, setRowData] = useState([]);
   const [newItemName, setNewItemName] = useState('');
 
   useEffect(() => {
-    if (param) {
+    if (param?.values?.length) {
       setRowData(param.values);
+      // if (gridApi) {
+      //   gridApi.forEachNode(node => {
+      //     if (node.data.isSelected) {
+      //       node.setSelected(true);
+      //     }
+      //   });
+      // }
     }
-  }, [param]);
-
-  useEffect(() => {
-    if (gridApi) {
-      // Pre-select checkboxes based on isSelected property
-      gridApi.forEachNode(node => {
-        console.log("Node Data ",node.data)
-        if (node.data.isSelected) {
-          node.setSelected(true);
-        }
-      });
-    }
-  }, [gridApi]);
+  }, [param?.values]);
 
   // Column definitions for ag-Grid
   const columnDefs = [
@@ -34,8 +30,9 @@ export const TableWithCustomDropdown = ({ param, handleChange }) => {
       field: 'displayName',
       checkboxSelection: true,
       headerCheckboxSelection: true,
-      floatingFilter: param && param?.parameter?.parameterName === 'inputList',
-      filter: param && param?.parameter?.parameterName === 'inputList',
+      //floatingFilter: param && param?.parameter?.parameterName === 'inputList',
+      //filter: param && param?.parameter?.parameterName === 'inputList',
+      //cellRenderer: CheckboxRenderer,
     },
   ];
 
@@ -56,8 +53,6 @@ export const TableWithCustomDropdown = ({ param, handleChange }) => {
       handleChange(param.parameter.parameterName, selectedData)
     }
   };
-
-  
 
   return (
     <div className="ag-theme-alpine" style={{ height: '260px', width: '250px' }}>

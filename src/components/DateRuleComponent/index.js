@@ -8,10 +8,9 @@ export const DateRuleComponent = ({ param, handleChange }) => {
     return (
         <StackLayout gap={1} direction="row">
             <Dropdown
-                valueToString={(option) => option.displayName || [defaultSelectedOption.displayName]}
-                defaultSelected={defaultSelectedOption ? [defaultSelectedOption.displayName] : []}
-                validationStatus={param.mandatory && !defaultSelectedOption && param.isInvalid ? 'error' : null}
-                onSelectionChange={(e, selectedOption) => handleChange(param.parameter.parameterName, selectedOption[0].parameterValue)}
+                value={param.values.some((option) => option.isSelected) ? [param.values.find((option) => option.isSelected)?.displayName] : []}
+                validationStatus={param.mandatory && !param.values.some((option) => option.isSelected) && param.isInvalid ? 'error' : null}
+                onSelectionChange={(e, selectedOption) => handleChange(param.parameter?.parameterName, selectedOption?.[0]?.parameterValue)}
             >
                 {param.values.map((option) => (
                     <Option key={option.parameterValue} value={option}>
