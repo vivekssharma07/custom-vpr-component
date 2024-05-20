@@ -206,6 +206,40 @@ export const mockData = {
             },
             "description": null,
             "noSelect": "Please select a view"
+        },
+        {
+            "type": "selectlist",
+            "parameter": {
+                "displayName": "Select Accounts or Accounts Group",
+                "parameterName": "inputList"
+            },
+            "values": [
+                {
+                    "displayName": "MultiSelect View",
+                    "parameterValue": "MA",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "CA View",
+                    "parameterValue": "CA",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "IP View",
+                    "parameterValue": "IP",
+                    "isSelected": false
+                }
+            ],
+            "mandatory": false,
+            "dynamic": {
+                "parents": [
+                    "sampleParameter"
+                ],
+                "children": [
+                ]
+            },
+            "description": null,
+            "noSelect": "Please select a view"
         }
     ]
 }
@@ -258,16 +292,7 @@ export const secondaryMockData =
                 "displayName": "Report Name",
                 "parameterName": "REPORT_ID"
             },
-            "values": [{
-                "displayName": "Report Name",
-                "parameterValue": "REPORT_NAME",
-                "isSelected": false
-            },
-            {
-                "displayName": "Report 2",
-                "parameterValue": "REPORT2",
-                "isSelected": false
-            }],
+            "values": [],
             "mandatory": true,
             "dynamic": {
                 "parents": [

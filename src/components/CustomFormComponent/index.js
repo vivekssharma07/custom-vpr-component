@@ -5,9 +5,10 @@ import { CheckboxComponent } from '../CheckboxComponent';
 import { DateRuleComponent } from '../DateRuleComponent';
 import { DropdownComponent } from '../DropDownComponent';
 import { TableWithCustomDropdown } from '../TableWithCustomDropdown';
+import { MultiSelectList } from '../MultiSelectList';
 import { FormField, FormFieldLabel, FlexLayout, FlexItem, Button, H1, } from '@salt-ds/core';
 
-export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedParameter, setFormData ,setIsValueChanged}) => {
+export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedParameter, setFormData, setIsValueChanged }) => {
 
   const handleChange = (parameterName, value) => {
     let updatedFormData = formData.map(param => {
@@ -17,6 +18,18 @@ export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedPara
             ...item,
             isSelected: value.some(val => val.parameterValue === item.parameterValue) ? true : false
           }));
+
+          const isNewValue = value.every(val => !updatedValues.some(item => item.parameterValue === val.parameterValue));
+
+          // If the new value doesn't exist, add it to the updatedValues
+          if (isNewValue && value?.length) {
+            updatedValues.push({
+              displayName: value[0].displayName,
+              parameterValue: value[0].parameterValue, // Assuming value[0] is the new value
+              isSelected: true
+            });
+          }
+
           return { ...param, values: updatedValues };
         } else {
           // For other parameters, update isSelected based on parameterValue
@@ -29,9 +42,10 @@ export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedPara
       }
       return param;
     });
-    setFormData(updatedFormData);
+
     setCurrentSelectedParameter({ parameterName, value })
     setIsValueChanged(true)
+    setFormData(updatedFormData);
   };
 
   // Handle form submission
@@ -69,7 +83,8 @@ export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedPara
               {param.type === 'dropdown' && <DropdownComponent param={param} handleChange={handleChange} />}
               {param.type === 'checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
               {param.type === 'radio' && <RadioButtonComponent param={param} handleChange={handleChange} />}
-              {param.type === 'selectlist' && <TableWithCustomDropdown param={param} handleChange={handleChange} />}
+              {/* {param.type === 'selectlist' && <TableWithCustomDropdown param={param} handleChange={handleChange} />} */}
+              {param.type === 'selectlist' && <MultiSelectList param={param} handleChange={handleChange} />}
             </FormField>
           </FlexItem>
         ))

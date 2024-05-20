@@ -1,29 +1,29 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { StackLayout, Input, Button } from '@salt-ds/core';
 
 export const TableWithCustomDropdown = ({ param, handleChange }) => {
-  const [gridApi, setGridApi] = useState(null);
   const [rowData, setRowData] = useState([]);
   const [newItemName, setNewItemName] = useState('');
-  const [isCheckBoxSelected, setCheckboxSelected] = useState('');
+  const gridStyle = useMemo(() => ({ height: "260px", width: "250px" }), []);
 
-  const [columnDefs, setColumnDefs] = useState([
+  const columnDefs = useMemo(() => [
     {
       headerName: "Select All",
       field: "displayName",
       headerCheckboxSelection: true,
       checkboxSelection: true,
     }
-  ]);
+  ], []);
 
   useEffect(() => {
     if (param?.values?.length) {
+      console.log("Use Effect ")
       setRowData(param.values);
     }
-  }, [param?.values]);
+  }, []);
 
   const onFirstDataRendered = useCallback((params) => {
     const nodesToSelect = [];
@@ -45,7 +45,7 @@ export const TableWithCustomDropdown = ({ param, handleChange }) => {
   };
 
   const handleSelectionChanged = (e) => {
-    console.log("handleSelectionChanged")
+    console.log("handleSelectionChanged",)
     const selectedNodes = e.api.getSelectedNodes();
     const selectedData = selectedNodes.map(node => node.data);
     if (selectedData) {
@@ -54,19 +54,17 @@ export const TableWithCustomDropdown = ({ param, handleChange }) => {
   }
 
   return (
-    <div className="ag-theme-alpine" style={{ height: '260px', width: '250px' }}>
+    <div style={gridStyle} className="ag-theme-alpine">
       <AgGridReact
-        // onGridReady={({ api }) => {
-        //   //setGridApi(api);
-        //   //api.sizeColumnsToFit();
-        // }}
-        onGridReady={handleGridReady}
-
+        onGridReady={({ api }) => {
+          setGridApi(api);
+          api.sizeColumnsToFit();
+        }}
         columnDefs={columnDefs}
-        rowData={rowData}
-        rowSelection='multiple'
-        onFirstDataRendered={onFirstDataRendered}
+        rowData={param?.values}
+        rowSelection="multiple"
         onSelectionChanged={handleSelectionChanged}
+        onFirstDataRendered={onFirstDataRendered}
       />
       {param?.parameter?.parameterName === 'inputList' && (
         <StackLayout gap={1} direction="vertical" style={{ marginTop: '5px' }}>
@@ -81,4 +79,3 @@ export const TableWithCustomDropdown = ({ param, handleChange }) => {
     </div>
   );
 };
-

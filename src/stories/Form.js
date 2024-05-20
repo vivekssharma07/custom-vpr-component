@@ -55,6 +55,7 @@ export const Form = () => {
     const [formData, setFormData] = useState([]);
     const [currentSelectParameter, setCurrentSelectedParameter] = useState({});
     const [isValueChanged, setIsValueChanged] = useState(false);
+    const [isInitialCall, setInitialCall] = useState(false);
 
     const handleSubmit = (formData) => {
         console.log("On Form Submit", formData);
@@ -86,6 +87,7 @@ export const Form = () => {
             //const response = await axios.get('https://jsonplaceholder.typicode.com/todos/', { headers });
             // Update state with the fetched data
             setFormData(mockData?.parameters);
+            setInitialCall(true)
         } catch (error) {
             // Handle any errors that occur during the API call
             console.log("Error :", error)
@@ -96,21 +98,19 @@ export const Form = () => {
         // Initialize arrays to store parameters to update and parent parameters
         let parametersToUpdate = [];
         let parentParameters = [];
-    
         // Iterate through each parameter
         data.forEach(childParam => {
             // Check if the child parameter has a single dynamic parent
             if (childParam.dynamic && childParam.dynamic.parents && childParam.dynamic.parents.length === 1) {
                 const parentParamName = childParam.dynamic.parents[0];
                 const parentParam = data.find(param => param.parameter.parameterName === parentParamName);
-    
                 // Proceed only if the parent parameter exists
                 if (parentParam) {
                     // Update parent parameters and values if not already done
                     if (!parametersToUpdate.includes(childParam.parameter.parameterName)) {
                         parametersToUpdate.push(childParam.parameter.parameterName);
                         const selectedValue = parentParam.values.find(value => value.isSelected)?.parameterValue;
-    
+
                         if (selectedValue) {
                             parentParameters.push({
                                 name: parentParamName,
@@ -118,11 +118,11 @@ export const Form = () => {
                             });
                         }
                     }
-    
+
                     // Iterate through the children of the parent parameter
                     parentParam.dynamic.children.forEach(grandChildParamName => {
                         const grandChildParam = data.find(param => param.parameter.parameterName === grandChildParamName);
-    
+
                         // Proceed only if the grandchild parameter has dynamic parents
                         if (grandChildParam.dynamic && grandChildParam.dynamic.parents) {
                             grandChildParam.dynamic.parents.forEach(grandParentParamName => {
@@ -130,7 +130,7 @@ export const Form = () => {
                                 if (parentParamName !== grandParentParamName) {
                                     const grandParentParam = data.find(param => param.parameter.parameterName === grandParentParamName);
                                     const values = grandParentParam.values.filter(value => value.isSelected).map(value => value.parameterValue);
-    
+
                                     // Update parent parameters and values for the grandchild parameter
                                     if (values.length && parentParamName !== grandParentParamName) {
                                         const childToUpdate = grandParentParam.dynamic.children[0];
@@ -149,10 +149,10 @@ export const Form = () => {
                 }
             }
         });
-    
+
         return { parametersToUpdate, parentParameters };
     };
-    
+
     const updateformData = useCallback((apiResponse) => {
         const updatedformData = formData.map(row => {
             const matchingParam = apiResponse.find(apiParam => apiParam.parameter.parameterName === row.parameter.parameterName);
@@ -166,19 +166,29 @@ export const Form = () => {
     }, [formData, setFormData, setCurrentSelectedParameter]);
 
     useEffect(() => {
-        const reqBody = formatSampledParameterRequest(mockData?.parameters)
-        console.log("Request Body ", reqBody)
-        fetchAccountData(reqBody)
-    }, [])
+        if (isInitialCall) {
+            const reqBody = formatSampledParameterRequest(mockData?.parameters)
+            console.log("Request Body isInitialCall", reqBody)
+            fetchAccountData(reqBody)
+        }
+    }, [isInitialCall])
 
-    useEffect(async () => {
+    useEffect(() => {
+        if (isValueChanged) {
+            const reqBody = formatSampledParameterRequest(mockData?.parameters)
+            console.log("Request Body isValueChanged", reqBody)
+            fetchAccountData(reqBody)
+        }
+    }, [isValueChanged])
+
+    useEffect(() => {
         fetchInitialData();
         //const reqBody = formatSampledParameterRequest(mockData?.parameters)
         //console.log("Request Body ", reqBody)
         //fetchAccountData(reqBody)
     }, [])
 
-    console.log("Form Data ", formData)
+    console.log("Form Data", formData)
 
     return (<>
         <SaltProvider>
