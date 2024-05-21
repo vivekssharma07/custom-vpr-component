@@ -5,6 +5,33 @@ export const mockData = {
     "Account": null,
     "parameters": [
         {
+            "type": "dateRule",
+            "parameter": {
+                "displayName": "Effective Date",
+                "parameterName": "effDt"
+            },
+            "values": [
+                {
+                    "displayName": "Current Business Day",
+                    "parameterValue": "04/26/2024",
+                    "isSelected": false
+                },
+                {
+                    "displayName": "Prior Business Day",
+                    "parameterValue": "04/25/2024",
+                    "isSelected":false
+                },
+                {
+                    "displayName": "User Defined",
+                    "parameterValue": "-",
+                    "isSelected":true
+                }
+            ],
+            "mandatory": true,
+            "description": null,
+            "noSelect": null
+        },
+        {
             "type": "dropdown",
             "parameter": {
                 "displayName": "Business Unit",
@@ -13,7 +40,7 @@ export const mockData = {
             "values": [{
                 "displayName": "BU",
                 "parameterValue": "00206",
-                "isSelected": true
+                "isSelected": false
             }],
             "mandatory": true,
             "dynamic": {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { RadioButtonComponent } from '../RadioComponent';
 import { CheckboxComponent } from '../CheckboxComponent';
@@ -10,43 +10,58 @@ import { FormField, FormFieldLabel, FlexLayout, FlexItem, Button, H1, } from '@s
 
 export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedParameter, setFormData, setIsValueChanged }) => {
 
-  const handleChange = (parameterName, value) => {
-    let updatedFormData = formData.map(param => {
-      if (param.parameter.parameterName === parameterName) {
-        if (param.type === 'selectlist') {
-          const updatedValues = param.values.map(item => ({
-            ...item,
-            isSelected: value.some(val => val.parameterValue === item.parameterValue) ? true : false
-          }));
+  const handleChange = useCallback((parameterName, value, curretSelectedValue = '') => {
+    setFormData(prevFormData => {
+      return prevFormData.map(param => {
+        if (param.parameter.parameterName !== parameterName) return param;
 
-          const isNewValue = value.every(val => !updatedValues.some(item => item.parameterValue === val.parameterValue));
+        let updatedValues;
 
-          // If the new value doesn't exist, add it to the updatedValues
-          if (isNewValue && value?.length) {
-            updatedValues.push({
-              displayName: value[0].displayName,
-              parameterValue: value[0].parameterValue, // Assuming value[0] is the new value
-              isSelected: true
+        switch (param.type) {
+          case 'selectlist':
+            updatedValues = param.values.map(item => ({
+              ...item,
+              isSelected: value.some(val => val.parameterValue === item.parameterValue)
+            }));
+
+            const newValue = value.find(val => !param.values.some(item => item.parameterValue === val.parameterValue));
+
+            if (newValue) {
+              updatedValues = [...updatedValues, {
+                displayName: newValue.displayName,
+                parameterValue: newValue.parameterValue,
+                isSelected: true
+              }];
+            }
+            break;
+
+          case 'dateRule':
+            updatedValues = param.values.map(item => {
+              const isUserDefined = curretSelectedValue === "User Defined" && item.displayName === 'User Defined';
+              return {
+                ...item,
+                parameterValue: isUserDefined ? value : item.parameterValue,
+                isSelected: isUserDefined || item.parameterValue === value
+              };
             });
-          }
+            break;
 
-          return { ...param, values: updatedValues };
-        } else {
-          // For other parameters, update isSelected based on parameterValue
-          const updatedValues = param.values.map(item => ({
-            ...item,
-            isSelected: item.parameterValue === value
-          }));
-          return { ...param, values: updatedValues };
+          default:
+            updatedValues = param.values.map(item => ({
+              ...item,
+              isSelected: item.parameterValue === value
+            }));
+            break;
         }
-      }
-      return param;
+
+        return { ...param, values: updatedValues };
+      });
     });
 
-    setCurrentSelectedParameter({ parameterName, value })
-    setIsValueChanged(true)
-    setFormData(updatedFormData);
-  };
+    setCurrentSelectedParameter({ parameterName, value });
+    setIsValueChanged(true);
+  }, [setFormData, setCurrentSelectedParameter, setIsValueChanged]);
+
 
   // Handle form submission
   const handleSubmit = (event) => {
