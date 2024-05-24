@@ -101,8 +101,8 @@ export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedPara
               {param.type === 'dropdown' && <DropdownComponent param={param} handleChange={handleChange} />}
               {param.type === 'checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
               {param.type === 'radio' && <RadioButtonComponent param={param} handleChange={handleChange} />}
-              {param.type === 'selectlist' && <TableWithCustomDropdown param={param} handleChange={handleChange} />}
-              {/* {param.type === 'selectlist' && <MultiSelectList param={param} handleChange={handleChange} />} */}
+              {/* {param.type === 'selectlist' && <TableWithCustomDropdown param={param} handleChange={handleChange} />} */}
+              {param.type === 'selectlist' && <MultiSelectList param={param} handleChange={handleChange} />}
             </FormField>
           </FlexItem>
         ))
