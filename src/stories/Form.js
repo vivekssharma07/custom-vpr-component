@@ -12,13 +12,12 @@ import "@fontsource/open-sans/700-italic.css";
 import "@fontsource/open-sans/800.css";
 import "@fontsource/open-sans/800-italic.css";
 import "@fontsource/pt-mono";
-// Import <SaltProvider>
 import { SaltProvider } from "@salt-ds/core";
-// Import theme CSS
 import "@salt-ds/theme/index.css";
-import { CustomFormComponent } from '../components/CustomFormComponent';
+import { CustomFormComponent } from '../components/CustomForm.js';
 import { mockData } from './fieldsData.js';
 import axios, { formToJSON } from 'axios';
+import { formatSampledParameterRequest } from '../components/Helper.js';
 
 const apiResponse = [{
     "type": "selectlist",
@@ -94,65 +93,6 @@ export const Form = () => {
         }
     };
 
-    const formatSampledParameterRequest = (data) => {
-        // Initialize arrays to store parameters to update and parent parameters
-        let parametersToUpdate = [];
-        let parentParameters = [];
-        // Iterate through each parameter
-        data.forEach(childParam => {
-            // Check if the child parameter has a single dynamic parent
-            if (childParam.dynamic && childParam.dynamic.parents && childParam.dynamic.parents.length === 1) {
-                const parentParamName = childParam.dynamic.parents[0];
-                const parentParam = data.find(param => param.parameter.parameterName === parentParamName);
-                // Proceed only if the parent parameter exists
-                if (parentParam) {
-                    // Update parent parameters and values if not already done
-                    if (!parametersToUpdate.includes(childParam.parameter.parameterName)) {
-                        parametersToUpdate.push(childParam.parameter.parameterName);
-                        const selectedValue = parentParam.values.find(value => value.isSelected)?.parameterValue;
-
-                        if (selectedValue) {
-                            parentParameters.push({
-                                name: parentParamName,
-                                values: [selectedValue]
-                            });
-                        }
-                    }
-
-                    // Iterate through the children of the parent parameter
-                    parentParam.dynamic.children.forEach(grandChildParamName => {
-                        const grandChildParam = data.find(param => param.parameter.parameterName === grandChildParamName);
-
-                        // Proceed only if the grandchild parameter has dynamic parents
-                        if (grandChildParam.dynamic && grandChildParam.dynamic.parents) {
-                            grandChildParam.dynamic.parents.forEach(grandParentParamName => {
-                                // Exclude the parent parameter itself
-                                if (parentParamName !== grandParentParamName) {
-                                    const grandParentParam = data.find(param => param.parameter.parameterName === grandParentParamName);
-                                    const values = grandParentParam.values.filter(value => value.isSelected).map(value => value.parameterValue);
-
-                                    // Update parent parameters and values for the grandchild parameter
-                                    if (values.length && parentParamName !== grandParentParamName) {
-                                        const childToUpdate = grandParentParam.dynamic.children[0];
-                                        if (!parametersToUpdate.includes(childToUpdate)) {
-                                            parametersToUpdate.push(childToUpdate);
-                                        }
-                                        parentParameters.push({
-                                            name: grandParentParamName,
-                                            values: [values]
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        });
-
-        return { parametersToUpdate, parentParameters };
-    };
-
     const updateformData = useCallback((apiResponse) => {
         const updatedformData = formData.map(row => {
             const matchingParam = apiResponse.find(apiParam => apiParam.parameter.parameterName === row.parameter.parameterName);
@@ -183,9 +123,6 @@ export const Form = () => {
 
     useEffect(() => {
         fetchInitialData();
-        //const reqBody = formatSampledParameterRequest(mockData?.parameters)
-        //console.log("Request Body ", reqBody)
-        //fetchAccountData(reqBody)
     }, [])
 
     console.log("Form Data", formData)

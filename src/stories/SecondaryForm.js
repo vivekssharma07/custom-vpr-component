@@ -16,7 +16,7 @@ import "@fontsource/pt-mono";
 import { SaltProvider } from "@salt-ds/core";
 // Import theme CSS
 import "@salt-ds/theme/index.css";
-import { CustomFormComponent } from '../components/CustomFormComponent';
+import { CustomFormComponent } from '../components/CustomForm';
 import { secondaryMockData } from './fieldsData';
 import axios from 'axios';
 

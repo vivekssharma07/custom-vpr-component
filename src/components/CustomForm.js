@@ -1,71 +1,74 @@
 import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { RadioButtonComponent } from '../RadioComponent';
-import { CheckboxComponent } from '../CheckboxComponent';
-import { DateRuleComponent } from '../DateRuleComponent';
-import { DropdownComponent } from '../DropDownComponent';
-import { TableWithCustomDropdown } from '../TableWithCustomDropdown';
-import { MultiSelectList } from '../MultiSelectList';
+import { RadioButtonComponent } from '../components/RadioButton';
+import { CheckboxComponent } from '../components/Checkbox';
+import { DateRuleComponent } from '../components//DateRule';
+import { DropdownComponent } from '../components/DropDown';
+import { TableWithCustomDropdown } from '../components/SelectListAgGrid';
+import { MultiSelectList } from '../components/MultiSelect';
 import { FormField, FormFieldLabel, FlexLayout, FlexItem, Button, H1, } from '@salt-ds/core';
-
+import { handleChange as handleChangeFunction } from '../components/Helper'
 export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedParameter, setFormData, setIsValueChanged }) => {
 
-  const handleChange = useCallback((parameterName, value, curretSelectedValue = '') => {
-    setFormData(prevFormData => {
-      return prevFormData.map(param => {
-        if (param.parameter.parameterName !== parameterName) return param;
+  // const handleChangeOld = useCallback((parameterName, value, curretSelectedValue = '') => {
+  //   setFormData(prevFormData => {
+  //     return prevFormData.map(param => {
+  //       if (param.parameter.parameterName !== parameterName) return param;
 
-        let updatedValues;
+  //       let updatedValues;
 
-        switch (param.type) {
-          case 'selectlist':
-            updatedValues = param.values.map(item => ({
-              ...item,
-              isSelected: value.some(val => val.parameterValue === item.parameterValue)
-            }));
+  //       switch (param.type) {
+  //         case 'selectlist':
+  //           updatedValues = param.values.map(item => ({
+  //             ...item,
+  //             isSelected: value.some(val => val.parameterValue === item.parameterValue)
+  //           }));
 
-            const newValue = value.find(val => !param.values.some(item => item.parameterValue === val.parameterValue));
+  //           const newValue = value.find(val => !param.values.some(item => item.parameterValue === val.parameterValue));
 
-            if (newValue) {
-              updatedValues = [...updatedValues, {
-                displayName: newValue.displayName,
-                parameterValue: newValue.parameterValue,
-                isSelected: true
-              }];
-            }
-            break;
+  //           if (newValue) {
+  //             updatedValues = [...updatedValues, {
+  //               displayName: newValue.displayName,
+  //               parameterValue: newValue.parameterValue,
+  //               isSelected: true
+  //             }];
+  //           }
+  //           break;
 
-          case 'dateRule':
-            updatedValues = param.values.map(item => {
-              const isUserDefined = curretSelectedValue === "User Defined" && item.displayName === 'User Defined';
-              return {
-                ...item,
-                parameterValue: isUserDefined ? value : item.parameterValue,
-                isSelected: isUserDefined || item.parameterValue === value
-              };
-            });
-            break;
+  //         case 'dateRule':
+  //           updatedValues = param.values.map(item => {
+  //             const isUserDefined = curretSelectedValue === "User Defined" && item.displayName === 'User Defined';
+  //             return {
+  //               ...item,
+  //               parameterValue: isUserDefined ? value : item.parameterValue,
+  //               isSelected: isUserDefined || item.parameterValue === value
+  //             };
+  //           });
+  //           break;
 
-          default:
-            updatedValues = param.values.map(item => ({
-              ...item,
-              isSelected: item.parameterValue === value
-            }));
-            break;
-        }
+  //         default:
+  //           updatedValues = param.values.map(item => ({
+  //             ...item,
+  //             isSelected: item.parameterValue === value
+  //           }));
+  //           break;
+  //       }
 
-        return { ...param, values: updatedValues };
-      });
-    });
+  //       return { ...param, values: updatedValues };
+  //     });
+  //   });
 
-    setCurrentSelectedParameter({ parameterName, value });
-    setIsValueChanged(true);
-  }, [setFormData, setCurrentSelectedParameter, setIsValueChanged]);
+  //   setCurrentSelectedParameter({ parameterName, value });
+  //   setIsValueChanged(true);
+  // }, [setFormData, setCurrentSelectedParameter, setIsValueChanged]);
 
+  const handleChange = useCallback(handleChangeFunction(setFormData, setCurrentSelectedParameter, setIsValueChanged),
+    [setFormData, setCurrentSelectedParameter, setIsValueChanged]);
 
   // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
+
     // Check for mandatory fields
     const isFormValid = formData.every(param => !param.mandatory || param.values.some(item => item.isSelected));
     // If form is valid, submit data; otherwise, set invalid flag for mandatory fields
@@ -98,8 +101,8 @@ export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedPara
               {param.type === 'dropdown' && <DropdownComponent param={param} handleChange={handleChange} />}
               {param.type === 'checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
               {param.type === 'radio' && <RadioButtonComponent param={param} handleChange={handleChange} />}
-              {/* {param.type === 'selectlist' && <TableWithCustomDropdown param={param} handleChange={handleChange} />} */}
-              {param.type === 'selectlist' && <MultiSelectList param={param} handleChange={handleChange} />}
+              {param.type === 'selectlist' && <TableWithCustomDropdown param={param} handleChange={handleChange} />}
+              {/* {param.type === 'selectlist' && <MultiSelectList param={param} handleChange={handleChange} />} */}
             </FormField>
           </FlexItem>
         ))
