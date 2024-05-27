@@ -4,54 +4,41 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { StackLayout, Input, Button, Checkbox } from '@salt-ds/core';
 
-const CustomHeader = ({ api, column }) => {
-  const [checked, setChecked] = useState(false);
+const CustomComponent = ({ data, api }) => {
+  const [checked, setChecked] = useState(data.isSelected);
 
   const onCheckboxChange = (event) => {
     const isChecked = event.target.checked;
     setChecked(isChecked);
-    api.forEachNode((node) => node.setSelected(isChecked));
-  };
 
-  return (
-    <div className="custom-header">
-      <Checkbox
-        checked={checked}
-        onChange={onCheckboxChange}
-      />
-      <span>{column.colDef.headerName}</span>
-    </div>
-  );
-};
+    const nodesToUpdate = [];
+    api.forEachNode((node) => {
+      if (node.data.id === data.id) {
+        node.data.isSelected = isChecked;
+        nodesToUpdate.push(node);
+      }
+    });
 
-const CustomComponent = ({ value, api }) => {
-  const [checked, setChecked] = useState(value.isSelected);
-
-  const onCheckboxChange = (event) => {
-    const isChecked = event.target.checked;
-    setChecked(isChecked);
-    const node = api.getRowNode(value.id);
-    if (node) {
-      node.setSelected(isChecked);
-    }
+    api.redrawRows({ rowNodes: [nodesToUpdate] });
+   
   };
 
   useEffect(() => {
-    setChecked(value.isSelected);
-  }, [value.isSelected]);
+    setChecked(data.isSelected);
+  }, [data.isSelected]);
 
   return (
-    <div className="custom-component">
+    <StackLayout gap={1} direction="row" align='center'>
       <Checkbox
         checked={checked}
         onChange={onCheckboxChange}
       />
-      <span>{value.displayName}</span>
-    </div>
+      <span>{data.displayName}</span>
+    </StackLayout>
   );
 };
 
-export const TableWithCustomDropdown = ({ param, handleChange }) => {
+export const SelectListAgGrid = ({ param, handleChange }) => {
   const [rowData, setRowData] = useState([]);
   const [newItemName, setNewItemName] = useState('');
   const gridStyle = useMemo(() => ({ height: "260px", width: "250px" }), []);
@@ -60,27 +47,22 @@ export const TableWithCustomDropdown = ({ param, handleChange }) => {
     {
       headerName: "Select All",
       field: "displayName",
-      headerComponentFramework: CustomHeader,
-      cellRendererFramework: CustomComponent,
+      headerCheckboxSelection: true,
+      headerCheckboxSelectionFilteredOnly: true,
+      cellRendererSelector: () => {
+        return {
+          component: CustomComponent,
+          params: param
+        }
+      }
     }
-  ], []);
+  ], [param]);
 
   useEffect(() => {
     if (param?.values?.length) {
-      console.log("Use Effect ");
       setRowData(param.values.map((item, index) => ({ ...item, id: index })));
     }
   }, [param?.values]);
-
-  const onFirstDataRendered = useCallback((params) => {
-    const nodesToSelect = [];
-    params.api.forEachNode((node) => {
-      if (node.data && node.data.isSelected === true) {
-        nodesToSelect.push(node);
-      }
-    });
-    params.api.setNodesSelected({ nodes: nodesToSelect, newValue: true });
-  }, []);
 
   const addItemToList = () => {
     if (newItemName.trim() !== '') {
@@ -91,14 +73,16 @@ export const TableWithCustomDropdown = ({ param, handleChange }) => {
     }
   };
 
-  const handleSelectionChanged = (e) => {
-    console.log("handleSelectionChanged");
-    const selectedNodes = e.api.getSelectedNodes();
-    const selectedData = selectedNodes.map(node => node.data);
-    if (selectedData) {
-      handleChange(param.parameter.parameterName, selectedData);
-    }
-  };
+  const handleSelectionChanged = (params) => {
+    const nodesToSelect = [];
+    params.api.forEachNode((node) => {
+      if (node.data && node.data.isSelected) {
+        nodesToSelect.push(node);
+      }
+    });
+    const selectedData = nodesToSelect.map(node => node.data);
+    handleChange(param.parameter.parameterName, selectedData);
+  }
 
   return (
     <div style={gridStyle} className="ag-theme-alpine">
@@ -106,8 +90,7 @@ export const TableWithCustomDropdown = ({ param, handleChange }) => {
         columnDefs={columnDefs}
         rowData={rowData}
         rowSelection="multiple"
-        onSelectionChanged={handleSelectionChanged}
-        onFirstDataRendered={onFirstDataRendered}
+        onRowClicked={handleSelectionChanged}
         suppressRowClickSelection={true} // Disables built-in row selection
         suppressCheckboxSelection={true} // Disables built-in checkbox selection
       />

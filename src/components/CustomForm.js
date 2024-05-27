@@ -4,7 +4,7 @@ import { RadioButtonComponent } from '../components/RadioButton';
 import { CheckboxComponent } from '../components/Checkbox';
 import { DateRuleComponent } from '../components//DateRule';
 import { DropdownComponent } from '../components/DropDown';
-import { TableWithCustomDropdown } from '../components/SelectListAgGrid';
+import { SelectListAgGrid } from '../components/SelectListAgGrid';
 import { MultiSelectList } from '../components/MultiSelect';
 import { FormField, FormFieldLabel, FlexLayout, FlexItem, Button, H1, } from '@salt-ds/core';
 import { handleChange as handleChangeFunction } from '../components/Helper'
@@ -101,8 +101,8 @@ export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedPara
               {param.type === 'dropdown' && <DropdownComponent param={param} handleChange={handleChange} />}
               {param.type === 'checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
               {param.type === 'radio' && <RadioButtonComponent param={param} handleChange={handleChange} />}
-              {/* {param.type === 'selectlist' && <TableWithCustomDropdown param={param} handleChange={handleChange} />} */}
-              {param.type === 'selectlist' && <MultiSelectList param={param} handleChange={handleChange} />}
+              {param.type === 'selectlist' && <SelectListAgGrid param={param} handleChange={handleChange} />}
+              {/* {param.type === 'selectlist' && <MultiSelectList param={param} handleChange={handleChange} />} */}
             </FormField>
           </FlexItem>
         ))
