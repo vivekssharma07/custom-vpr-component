@@ -16,7 +16,7 @@ import { SaltProvider } from "@salt-ds/core";
 import "@salt-ds/theme/index.css";
 import { CustomFormComponent } from '../components/CustomForm.js';
 import { mockData } from './fieldsData.js';
-import axios, { formToJSON } from 'axios';
+import axios from 'axios';
 import { formatSampledParameterRequest } from '../components/Helper.js';
 
 const apiResponse = [{
@@ -48,13 +48,12 @@ const apiResponse = [{
     },
     "description": null,
     "noSelect": null
-}]
+}];
 
 export const Form = () => {
-    const [formData, setFormData] = useState([]);
+    const [formData, setFormData] = useState(mockData?.parameters);
     const [currentSelectParameter, setCurrentSelectedParameter] = useState({});
     const [isValueChanged, setIsValueChanged] = useState(false);
-    const [isInitialCall, setInitialCall] = useState(false);
 
     const handleSubmit = (formData) => {
         console.log("On Form Submit", formData);
@@ -62,82 +61,72 @@ export const Form = () => {
 
     const fetchAccountData = async (reqBody) => {
         try {
-            const headers = {
-                'Content-Type': 'application/json',
-            };
-
-            const URL = 'https://jsonplaceholder.typicode.com/todos';
-            //const response = await axios.post(URL, reqBody, { headers });
-            updateformData(apiResponse)
-            //console.log("Response ", response);
-            //setFormData(parameters);
+            updateformData(apiResponse);
+            console.log("Form Data after update:", formData);
         } catch (error) {
             console.error("Error fetching account data: ", error);
         }
     };
 
-    // Define a function to fetch data
     const fetchInitialData = async () => {
         try {
-            const headers = {
-                'Content-Type': 'application/json',
-            };
-
-            //const response = await axios.get('https://jsonplaceholder.typicode.com/todos/', { headers });
-            // Update state with the fetched data
-            setFormData(mockData?.parameters);
-            setInitialCall(true)
+            setFormData(mockData?.parameters || []);
+            console.log("Initial Form Data:", mockData?.parameters);
         } catch (error) {
-            // Handle any errors that occur during the API call
-            console.log("Error :", error)
+            console.log("Error fetching initial data:", error);
         }
     };
 
     const updateformData = useCallback((apiResponse) => {
+        let isChanged = false;
         const updatedformData = formData.map(row => {
             const matchingParam = apiResponse.find(apiParam => apiParam.parameter.parameterName === row.parameter.parameterName);
             if (matchingParam) {
-                return { ...row, values: matchingParam.values };
+                const isRowChanged = JSON.stringify(row.values) !== JSON.stringify(matchingParam.values);
+                if (isRowChanged) {
+                    isChanged = true;
+                    return { ...row, values: matchingParam.values };
+                }
             }
             return row;
         });
-        setFormData(updatedformData);
-        setCurrentSelectedParameter({});
-    }, [formData, setFormData, setCurrentSelectedParameter]);
+
+        if (isChanged) {
+            setIsValueChanged(true)
+            setFormData(updatedformData);
+            setCurrentSelectedParameter({});
+        }
+    }, [formData]);
 
     useEffect(() => {
-        if (isInitialCall) {
-            const reqBody = formatSampledParameterRequest(mockData?.parameters)
-            console.log("Request Body isInitialCall", reqBody)
-            fetchAccountData(reqBody)
-        }
-    }, [isInitialCall])
+        const fetchData = async () => {
+            await fetchInitialData();
+            const reqBody = formatSampledParameterRequest(mockData?.parameters);
+            console.log("Request Body isValueChanged", reqBody);
+            await fetchAccountData(reqBody);
+        };
+        fetchData();
+    }, []);
 
     useEffect(() => {
         if (isValueChanged) {
-            const reqBody = formatSampledParameterRequest(mockData?.parameters)
-            console.log("Request Body isValueChanged", reqBody)
-            fetchAccountData(reqBody)
+            console.log("Current Form Data:", formData);
+            const reqBody = formatSampledParameterRequest(formData);
+            console.log("Request Body isValueChanged", reqBody);
+            fetchAccountData(reqBody);
         }
-    }, [isValueChanged])
+    }, [isValueChanged]);
 
-    useEffect(() => {
-        fetchInitialData();
-    }, [])
+    console.log("Form Data", formData);
 
-    console.log("Form Data", formData)
-
-    return (<>
+    return (
         <SaltProvider>
             <CustomFormComponent
                 formData={formData}
                 onSubmit={handleSubmit}
                 setCurrentSelectedParameter={setCurrentSelectedParameter}
                 setFormData={setFormData}
-                setIsValueChanged={setIsValueChanged}
             />
         </SaltProvider>
-    </>
-
     );
 };
