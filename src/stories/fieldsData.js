@@ -56,7 +56,16 @@ export const mockData = {
                 "displayName": "Report Name",
                 "parameterName": "REPORT_ID"
             },
-            "values": [],
+            "values": [{
+                "displayName": "Report Name",
+                "parameterValue": "REPORT_NAME",
+                "isSelected": false
+            },
+            {
+                "displayName": "Report 2",
+                "parameterValue": "REPORT2",
+                "isSelected": false
+            }],
             "mandatory": true,
             "dynamic": {
                 "parents": ["BU"],

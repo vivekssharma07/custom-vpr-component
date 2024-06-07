@@ -16,39 +16,8 @@ import { SaltProvider } from "@salt-ds/core";
 import "@salt-ds/theme/index.css";
 import { CustomFormComponent } from '../components/CustomForm.js';
 import { mockData } from './fieldsData.js';
-import axios from 'axios';
 import { formatSampledParameterRequest } from '../components/Helper.js';
-
-const apiResponse = [{
-    "type": "selectlist",
-    "parameter": {
-        "displayName": "Report Name",
-        "parameterName": "REPORT_ID"
-    },
-    "values": [{
-        "displayName": "Report Name",
-        "parameterValue": "REPORT_NAME",
-        "isSelected": true
-    },
-    {
-        "displayName": "Report 2",
-        "parameterValue": "REPORT2",
-        "isSelected": false
-    }],
-    "mandatory": true,
-    "dynamic": {
-        "parents": [
-            "BU"
-        ],
-        "children": [
-            "REL_DT",
-            "DTSTART",
-            "DTENT"
-        ]
-    },
-    "description": null,
-    "noSelect": null
-}];
+import { fetchAccountData, fetchInitialData } from '../stories/utils.js';
 
 export const Form = () => {
     const [formData, setFormData] = useState(mockData?.parameters);
@@ -59,25 +28,7 @@ export const Form = () => {
         console.log("On Form Submit", formData);
     };
 
-    const fetchAccountData = async (reqBody) => {
-        try {
-            updateformData(apiResponse);
-            console.log("Form Data after update:", formData);
-        } catch (error) {
-            console.error("Error fetching account data: ", error);
-        }
-    };
-
-    const fetchInitialData = async () => {
-        try {
-            setFormData(mockData?.parameters || []);
-            console.log("Initial Form Data:", mockData?.parameters);
-        } catch (error) {
-            console.log("Error fetching initial data:", error);
-        }
-    };
-
-    const updateformData = useCallback((apiResponse) => {
+    const updateRowData = useCallback((apiResponse) => {
         let isChanged = false;
         const updatedformData = formData.map(row => {
             const matchingParam = apiResponse.find(apiParam => apiParam.parameter.parameterName === row.parameter.parameterName);
@@ -94,28 +45,33 @@ export const Form = () => {
         if (isChanged) {
             setIsValueChanged(true)
             setFormData(updatedformData);
-            setCurrentSelectedParameter({});
         }
     }, [formData]);
 
     useEffect(() => {
         const fetchData = async () => {
-            await fetchInitialData();
+            const resp = await fetchInitialData();
+            updateRowData(resp)
             const reqBody = formatSampledParameterRequest(mockData?.parameters);
             console.log("Request Body isValueChanged", reqBody);
-            await fetchAccountData(reqBody);
+            const accResp = await fetchAccountData(reqBody);
+            updateRowData(accResp)
         };
         fetchData();
     }, []);
 
     useEffect(() => {
-        if (isValueChanged) {
-            console.log("Current Form Data:", formData);
-            const reqBody = formatSampledParameterRequest(formData);
-            console.log("Request Body isValueChanged", reqBody);
-            fetchAccountData(reqBody);
+        const validParametersName = new Set(["BU", "ANNUALIZED_CUMULATIVE", "REPORT_ID"])
+        if (isValueChanged && validParametersName.has(currentSelectParameter?.parameterName)) {
+            if (formData?.length) {
+                const reqBody = formatSampledParameterRequest(formData);
+                console.log("Request Body isValueChanged", reqBody);
+                fetchAccountData(reqBody).then((res) => {
+                    updateRowData(res)
+                });
+            }
         }
-    }, [isValueChanged]);
+    }, [isValueChanged, formData]);
 
     console.log("Form Data", formData);
 

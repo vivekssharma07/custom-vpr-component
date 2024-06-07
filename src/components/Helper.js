@@ -57,7 +57,7 @@ export const formatSampledParameterRequest = (data) => {
     return { parametersToUpdate, parentParameters };
 };
 
-export const handleChange = (setFormData, setCurrentSelectedParameter, setIsValueChanged) => (parameterName, value, currentSelectedValue = '') => {
+export const handleChange = (setFormData, setCurrentSelectedParameter) => (parameterName, value, currentSelectedValue = '') => {
     setFormData(prevFormData => {
         return prevFormData.map(param => {
             if (param.parameter.parameterName !== parameterName) return param;
@@ -106,5 +106,4 @@ export const handleChange = (setFormData, setCurrentSelectedParameter, setIsValu
     });
 
     setCurrentSelectedParameter({ parameterName, value });
-    setIsValueChanged(true);
 };

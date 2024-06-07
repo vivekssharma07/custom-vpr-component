@@ -18,7 +18,9 @@
     "build-storybook": "storybook build",
     "build": "rollup -c",
     "test": "react-scripts test",
-    "test:coverage": "react-scripts test --coverage"
+    "test:coverage": "react-scripts test --coverage",
+    "start": "craco start",
+    "eject": "react-scripts eject"
   },
   "author": "Vivek Sharma",
   "license": "MIT",
@@ -30,6 +32,7 @@
     "@emotion/styled": "^11.11.5",
     "@fontsource/open-sans": "^5.0.28",
     "@fontsource/pt-mono": "^5.0.13",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.13",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
@@ -58,6 +61,8 @@
     "jest-environment-jsdom": "^29.7.0",
     "lodash": "^4.17.21",
     "prop-types": "^15.8.1",
+    "react-app-rewired": "^2.2.1",
+    "react-refresh": "^0.14.2",
     "react-scripts": "^5.0.1",
     "rollup": "^2.75.7",
     "rollup-plugin-babel": "^4.4.0",
@@ -71,6 +76,25 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
+    "@craco/craco": "^7.1.0",
     "@storybook/addon-console": "^3.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

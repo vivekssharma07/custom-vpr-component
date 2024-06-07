@@ -20,7 +20,7 @@ const CustomComponent = ({ data, api }) => {
     });
 
     api.redrawRows({ rowNodes: [nodesToUpdate] });
-   
+
   };
 
   useEffect(() => {
@@ -41,20 +41,26 @@ const CustomComponent = ({ data, api }) => {
 export const SelectListAgGrid = ({ param, handleChange }) => {
   const [rowData, setRowData] = useState([]);
   const [newItemName, setNewItemName] = useState('');
-  const gridStyle = useMemo(() => ({ height: "260px", width: "250px" }), []);
+  const gridStyle = useMemo(() => ({ height: "300px", width: "250px" }), []);
+  const [gridApi, setGridApi] = useState(null);
 
   const columnDefs = useMemo(() => [
     {
       headerName: "Select All",
       field: "displayName",
-      headerCheckboxSelection: true,
       headerCheckboxSelectionFilteredOnly: true,
       cellRendererSelector: () => {
         return {
           component: CustomComponent,
           params: param
         }
-      }
+      },
+      headerCheckboxSelection: params => {
+        const displayedColumns = params.api.getAllDisplayedColumns();
+        console.log(displayedColumns,"Paras ",params)
+        return displayedColumns[0] === params.column;
+      },
+      width:250
     }
   ], [param]);
 
@@ -63,6 +69,10 @@ export const SelectListAgGrid = ({ param, handleChange }) => {
       setRowData(param.values.map((item, index) => ({ ...item, id: index })));
     }
   }, [param?.values]);
+
+  useEffect(() => {
+
+  }, [])
 
   const addItemToList = () => {
     if (newItemName.trim() !== '') {
@@ -84,9 +94,31 @@ export const SelectListAgGrid = ({ param, handleChange }) => {
     handleChange(param.parameter.parameterName, selectedData);
   }
 
+  const handleSelectAllChanged = useCallback(() => {
+    const selectedNodes = [];
+    gridApi.forEachNode((node) => {
+      if (node.isSelected()) {
+        selectedNodes.push(node.data);
+      }
+    });
+    handleChange(param.parameter.parameterName, selectedNodes);
+  }, [gridApi, param, handleChange]);
+
+  useEffect(() => {
+    if (gridApi) {
+      gridApi.addEventListener('selectAllChanged', handleSelectAllChanged);
+    }
+    return () => {
+      if (gridApi) {
+        gridApi.removeEventListener('selectAllChanged', handleSelectAllChanged);
+      }
+    };
+  }, [gridApi, handleSelectAllChanged]);
+
   return (
     <div style={gridStyle} className="ag-theme-alpine">
       <AgGridReact
+        onGridReady={(params) => setGridApi(params.api)}
         columnDefs={columnDefs}
         rowData={rowData}
         rowSelection="multiple"

@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { RadioButtonComponent } from '../components/RadioButton';
 import { CheckboxComponent } from '../components/Checkbox';
 import { DateRuleComponent } from '../components//DateRule';
 import { DropdownComponent } from '../components/DropDown';
@@ -8,7 +7,7 @@ import { SelectListAgGrid } from '../components/SelectListAgGrid';
 import { MultiSelectList } from '../components/MultiSelect';
 import { FormField, FormFieldLabel, FlexLayout, FlexItem, Button, H1, } from '@salt-ds/core';
 import { handleChange as handleChangeFunction } from '../components/Helper'
-export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedParameter, setFormData, setIsValueChanged }) => {
+export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedParameter, setFormData }) => {
 
   // const handleChangeOld = useCallback((parameterName, value, curretSelectedValue = '') => {
   //   setFormData(prevFormData => {
@@ -62,8 +61,8 @@ export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedPara
   //   setIsValueChanged(true);
   // }, [setFormData, setCurrentSelectedParameter, setIsValueChanged]);
 
-  const handleChange = useCallback(handleChangeFunction(setFormData, setCurrentSelectedParameter, setIsValueChanged),
-    [setFormData, setCurrentSelectedParameter, setIsValueChanged]);
+  const handleChange = useCallback(handleChangeFunction(setFormData, setCurrentSelectedParameter),
+    [setFormData, setCurrentSelectedParameter]);
 
   // Handle form submission
   const handleSubmit = (event) => {
@@ -100,7 +99,7 @@ export const CustomFormComponent = ({ formData, onSubmit, setCurrentSelectedPara
               {param.type === 'dateRule' && <DateRuleComponent param={param} handleChange={handleChange} />}
               {param.type === 'dropdown' && <DropdownComponent param={param} handleChange={handleChange} />}
               {param.type === 'checkbox' && <CheckboxComponent param={param} handleChange={handleChange} />}
-              {param.type === 'radio' && <RadioButtonComponent param={param} handleChange={handleChange} />}
+              {/* {param.type === 'radio' && <RadioButtonComponent param={param} handleChange={handleChange} />} */}
               {param.type === 'selectlist' && <SelectListAgGrid param={param} handleChange={handleChange} />}
               {/* {param.type === 'selectlist' && <MultiSelectList param={param} handleChange={handleChange} />} */}
             </FormField>
