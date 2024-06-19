@@ -30,21 +30,19 @@ export const RunAsSelectGrid = (props) => {
   }, [values]);
 
   useEffect(() => {
-    console.log("Grid API ",gridApi)
     if (gridApi) {
       gridApi.forEachNode((node) => {
         if (selectedValues.includes(node.data.parameterValue)) {
-          node.selectedThisNode(true)
+          node.setSelected(true)
         }
       })
     }
   }, [gridApi, rowData])
 
   const handleSelectionChange = (event) => {
-    console.log("Grid API handleSelectionChange ",event.source)
     if (["SelectAll", "checkboxSelected"].includes(event.source)) {
       const selectedData = event.api.getSelectedRows();
-      const selectedValues = selectedData?.length ? selectedData?.mao((row) => row[valueProp]) : []
+      const selectedValues = selectedData?.length ? selectedData?.map((row) => row[valueProp]) : []
       handleChange(name, selectedValues);
     }
   };
@@ -52,24 +50,27 @@ export const RunAsSelectGrid = (props) => {
   const onFirstDataRendered = (params) => {
     params.api.forEachNode((node) => {
       if (selectedValues.includes(node.data.parameterValue)) {
-        node.selectedThisNode(true)
+        node.setSelected(true)
       }
     })
 
     handleChange(name, [...selectedValues])
   }
 
+  const onGridReady = (params) => {
+    setGridApi(params.api)
+  }
+
   return (
-    <div style={gridStyle} className="ag-theme-alpine">
+    <div style={gridStyle} className="ag-theme-alpine" data-testid="ag-grid">
       <AgGridReact
         key={counter}
-        onGridReady={(params) => setGridApi(params.api)}
+        onGridReady={onGridReady}
         columnDefs={columnDefs}
         rowData={values}
         rowSelection="multiple"
         onSelectionChanged={handleSelectionChange}
         onFirstDataRendered={onFirstDataRendered}
-        data-testid="ag-grid" 
       />
     </div>
   );
